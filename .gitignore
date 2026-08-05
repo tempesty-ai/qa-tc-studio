@@ -1,0 +1,17 @@
+# 생성물 (render_report.py 출력)
+out/
+examples/out/
+
+# 서버 저장 결과
+statuses.json
+notes.json
+
+# 파이썬
+__pycache__/
+*.pyc
+
+# OS/에디터
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
