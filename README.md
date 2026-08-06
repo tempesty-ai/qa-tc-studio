@@ -53,8 +53,19 @@ python scripts/validate_tc.py examples/tc_data.example.json
 
 ### AI에게 초안을 맡기려면
 
-- **Claude Code**: [claude/SKILL.md](claude/SKILL.md) 를 `.claude/skills/qa-tc-studio/SKILL.md` 로 두면 스킬로 호출됩니다.
-- **Codex / 기타 에이전트**: [codex/AGENTS.md](codex/AGENTS.md) 의 지침을 프로젝트 `AGENTS.md`에 포함하세요.
+- **Codex**: 아래 GitHub 경로를 설치하면 됩니다.
+
+```text
+Install the Codex skill from https://github.com/tempesty-ai/qa-tc-studio/tree/main/skills/qa-tc-studio
+```
+
+- **Claude**: GitHub Release에서 `qa-tc-studio.zip`을 내려받아 custom skill로 업로드합니다.
+
+```text
+https://github.com/tempesty-ai/qa-tc-studio/releases/latest/download/qa-tc-studio.zip
+```
+
+자세한 설치 방법은 [docs/installation.md](docs/installation.md)에 정리되어 있습니다.
 
 두 경우 모두 산출물은 이 저장소의 `tc_data.json` 스키마를 따르며, 위 스크립트로 렌더링합니다.
 
@@ -103,8 +114,10 @@ qa-tc-studio/
 │  └─ validate_tc.py         자체 검증(중복 ID/공란/형식) — CI 연동
 ├─ schema/tc_data.schema.json
 ├─ examples/tc_data.example.json
-├─ claude/SKILL.md           Claude Code 스킬
-└─ codex/AGENTS.md           Codex/기타 에이전트 지침
+├─ skills/qa-tc-studio/      Codex/Claude 공용 설치형 Skill
+├─ claude/SKILL.md           이전 Claude 지침
+├─ codex/AGENTS.md           이전 Codex/기타 에이전트 지침
+└─ docs/installation.md      Codex/Claude 설치 가이드
 ```
 
 ---
