@@ -125,6 +125,7 @@ def build_tcs(data):
                         "risk": c.get("risk") or h_risk(section, func),
                         "confidence": c.get("confidence") or h_conf(note),
                         "pw": c.get("automation") or h_pw(note),
+                        "method": c.get("method", ""),
                     })
     return tcs, menus_meta
 
@@ -168,7 +169,7 @@ def render(data):
              "<div class='hbtn'><button onclick='exportCSV()'>결과 내보내기(CSV)</button>"
              "<label class='imp'>결과 불러오기(CSV)<input type='file' accept='.csv' onchange='importCSV(event)' hidden></label>"
              "<button onclick='resetStatus()' class='ghost'>초기화</button></div></header>"
-             "<p class='sub'>AI 초안 · QA 검증 · Pass/Fail/N·T·비고 는 이 페이지에서 입력하면 저장됩니다</p>")
+             "<p class='sub'>AI 초안 · QA 검증 · Pass/Fail/N·T·검증방법·비고 는 이 페이지에서 입력하면 저장됩니다</p>")
 
     # 대메뉴 바 (종합 + 데이터 메뉴들)
     menus_top = [(summary_label, "SUMMARY")] + [(m[0], m[1]) for m in menus_meta]
@@ -194,30 +195,47 @@ def render(data):
              ("화면별 섹션 분해", "각 화면을 목록/등록/수정/삭제/조회/권한 등 섹션으로 분해"),
              ("TC 작성", "일반 사용자 관점 번호 절차(1.~를 클릭한다) + 실제 제품 메시지로 기대결과"),
              ("메타 태깅", "설계기법·위험도·확신도·자동화 가능여부를 규칙으로 부여"),
+             ("단일 정본화 (JSON)", "모든 TC를 구조화된 tc_data.json 한 파일로 관리 — 내용(데이터)과 화면(렌더러)을 분리"),
              ("자체 검증", "Python 스크립트로 중복 ID·공란·형식 검증(AI 자가채점 아님)"),
-             ("산출물 생성", "인터랙티브 HTML 리포트/대시보드"),
-             ("QA 실행·보완", "Pass/Fail·비고 기록, 필터로 우선순위, Gap·탐색차터로 보완")]
+             ("산출물 생성", "같은 JSON에서 HTML 리포트·공유 대시보드·CSV로 자동 변환"),
+             ("QA 실행·보완", "Pass/Fail·비고·검증방법 기록, 필터로 우선순위, Gap·탐색차터로 보완")]
     flow = "".join((f"<div class='fstep'><span class='fn'>{i+1}</span><b>{esc(a)}</b><span class='fd'>{esc(d)}</span></div>"
                     + ("<div class='farrow'>▼</div>" if i < len(steps)-1 else "")) for i, (a, d) in enumerate(steps))
     P.append("<section class='pane on' data-tab='소개'><div class='intro'>"
              f"<h2>이 리포트는?</h2><p>테스트케이스를 <b>대메뉴 &gt; 카테고리 &gt; 화면</b> 구조로 정리하고, "
              "수동 테스트 실행(Pass/Fail·비고)과 설계 근거 추적을 한 곳에서 하도록 만든 리포트입니다. 상단 <b>대메뉴 바</b>에서 전환하세요.</p>"
+             "<h2>단일 정본(JSON)으로 관리하는 이유</h2>"
+             "<div class='expl'>모든 TC는 <b>tc_data.json</b> 한 파일을 정본으로 두고, 이 리포트/대시보드/CSV는 전부 그 JSON에서 생성됩니다. "
+             "<b>내용(데이터)과 화면(렌더러)을 분리</b>했기에:"
+             "<ul class='use' style='margin-top:6px'>"
+             "<li><b>한 곳만 수정</b> → 모든 산출물에 반영 (HTML을 직접 손대지 않음)</li>"
+             "<li><b>기계 검증 가능</b> → 중복 ID·공란·형식을 스크립트가 자동 점검</li>"
+             "<li><b>재사용·이식</b> → 같은 도구로 다른 제품도 리포트화 (내용만 교체)</li>"
+             "<li><b>결과가 TC ID에 고정</b> → 메뉴 순서를 바꿔도 Pass·비고·검증방법이 안 깨짐</li>"
+             "</ul></div>"
              "<h2>어떻게 설계했나 — 진행 순서</h2><div class='flow'>" + flow + "</div>"
              "<h2>구성</h2><div class='tabgrid'>"
-             "<div class='tcard'><b>종합 결과</b><div>진행율·Pass/Fail 집계·자동화 커버리지·위험도/확신도 분포·Fail 목록</div></div>"
-             "<div class='tcard'><b>대메뉴 · 카테고리</b><div>상단 대메뉴 선택 → 카테고리별 화면 TC + Pass/Fail·비고 + 필터</div></div>"
+             "<div class='tcard'><b>종합 결과</b><div>진행율·Pass/Fail 집계·검증방법(자동/수동)·자동화 커버리지·위험도/확신도 분포·Fail 목록</div></div>"
+             "<div class='tcard'><b>대메뉴 · 카테고리</b><div>상단 대메뉴 선택 → 카테고리별 화면 TC + Pass/Fail·비고·검증방법 + 필터</div></div>"
              "<div class='tcard'><b>설계맵</b><div>확신도 히트맵·기능 분류 트리·Gap 분석·탐색 차터</div></div>"
              "<div class='tcard'><b>판정 기준</b><div>위험도·확신도·설계기법·자동화 태깅 규칙</div></div></div>"
+             "<h2>두 개의 축 — 결과 vs 검증방법</h2>"
+             "<div class='expl'><b>결과(Pass/Fail/N·T)</b> = 테스트가 통과했는가. <b>검증방법(🤖자동/✋수동)</b> = 누가 확인했는가. "
+             "<u>서로 독립</u>이라 조합이 가능합니다 — 예: <b>Pass + 🤖자동</b>(Playwright가 통과 확인) vs <b>Pass + ✋수동</b>(QA가 직접 통과 확인). "
+             "나중에 “이거 누가 확인한 거지?”가 한눈에 구분됩니다. <span class='hint'>· N·T = 아직 안 함/보류(Not Tested)</span></div>"
              "<h2>사용법</h2><ul class='use'>"
              "<li>각 TC의 <b>[Pass][Fail][N·T]</b> 클릭·<b>비고</b> 입력 → 자동 저장</li>"
-             "<li>상단 <b>[결과 내보내기(CSV)]</b> 백업·공유, <b>[불러오기]</b> 복원</li>"
-             "<li>공유는 <b>serve_dashboard.py</b> 로 dashboard.html 을 띄우면 결과가 서버에 저장됨</li>"
+             "<li><b>검증방법</b> 버튼(🤖 자동 / ✋ 수동)으로 '누가 확인했는지' 표시 — Playwright 자동확인분은 🤖로 미리 표기됨(클릭하면 —→✋→🤖 순환)</li>"
+             "<li><b>필터</b>: 자동확인 / 수동확인 / 미확인 / 자동화 가능·불가 / Fail만 / 미실행만 으로 골라보기</li>"
+             "<li>상단 <b>[결과 내보내기(CSV)]</b> 백업·공유(TC ID·결과·검증방법·비고 포함), <b>[결과 불러오기(CSV)]</b> 복원, <b>[초기화]</b> Pass/Fail 리셋(비고는 유지)</li>"
+             "<li>공유는 <b>serve_dashboard.py</b> 로 dashboard.html 을 띄우면 결과·비고·검증방법이 서버에 저장돼 여러 명이 공유(단독 report.html은 브라우저에 저장)</li>"
              "</ul></div></section>")
 
     # 종합 결과
     rd = Counter(t['risk'] for t in tcs); cd = Counter(t['confidence'] for t in tcs); NT = max(1, len(tcs))
     P.append("<section class='pane' data-tab='종합 결과'>")
     P.append("<h2>전체 진행 현황</h2><div id='overall'></div>")
+    P.append("<h3>검증 방법 <span class='hint'>🤖 Playwright 자동 확인 / ✋ 수동 확인</span></h3><div id='methsum'></div>")
     P.append("<h3>카테고리별</h3><table class='sum'><thead><tr><th>카테고리</th><th>총</th><th>Pass</th><th>Fail</th><th>N/T</th><th>미실행</th><th>진행율</th></tr></thead><tbody id='catsum'></tbody></table>")
     P.append("<h3>자동화(Playwright) 커버리지</h3><div id='pwsum'></div>")
     P.append("<h3>위험도 · 확신도 분포 (설계 기준)</h3><div class='dist'>")
@@ -238,13 +256,17 @@ def render(data):
         return (f"<span class='st' data-id='{tid}'>"
                 f"<button class='s p' data-v='Pass' onclick=\"setSt('{tid}','Pass')\">Pass</button>"
                 f"<button class='s f' data-v='Fail' onclick=\"setSt('{tid}','Fail')\">Fail</button>"
-                f"<button class='s n' data-v='N/T' onclick=\"setSt('{tid}','N/T')\">N/T</button></span>")
+                f"<button class='s n' data-v='N/T' onclick=\"setSt('{tid}','N/T')\">N/T</button></span>"
+                f"<button class='mth' data-id='{tid}' onclick=\"cycleM('{tid}')\" title='검증 방법 (자동/수동) — 클릭해 전환'>—</button>")
 
     for cat in cats:
         P.append(f"<section class='pane' data-tab='{esc(cat)}' data-menu='{cat_menu[cat]}'>")
         P.append(f"<h2>{esc(cat)} <span class='cnt'>{len(by_cat[cat])} TC</span></h2>")
         P.append("<div class='filt'>필터: "
                  "<button class='fb on' data-f='all' onclick='filt(this)'>전체</button>"
+                 "<button class='fb' data-f='m-auto' onclick='filt(this)'>🤖 자동확인</button>"
+                 "<button class='fb' data-f='m-manual' onclick='filt(this)'>✋ 수동확인</button>"
+                 "<button class='fb' data-f='m-none' onclick='filt(this)'>미확인</button>"
                  "<button class='fb' data-f='pw-가능' onclick='filt(this)'>자동화 가능</button>"
                  "<button class='fb' data-f='pw-불가' onclick='filt(this)'>자동화 불가</button>"
                  "<button class='fb' data-f='st-Fail' onclick='filt(this)'>Fail만</button>"
@@ -344,6 +366,8 @@ th,td{border:1px solid #eceff1;padding:7px 9px;text-align:left;vertical-align:to
 .k{flex:0 0 66px;color:#889;font-weight:700;border-right:1px solid #d7dde2;padding-right:9px}.v{flex:1}.proc{white-space:normal}
 .st{display:inline-flex;gap:2px;margin-right:6px}.s{border:1px solid #cfd6db;background:#fff;color:#556;font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;cursor:pointer}
 .s.p.on{background:#2e9e5b;color:#fff;border-color:#2e9e5b}.s.f.on{background:#d64545;color:#fff;border-color:#d64545}.s.n.on{background:#9aa0a6;color:#fff;border-color:#9aa0a6}
+.mth{margin-left:6px;border:1px solid #cfd6db;background:#fff;color:#889;font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;cursor:pointer;min-width:64px}
+.mth.auto{background:#eaf3ff;color:#1c5fb0;border-color:#9dc4f0}.mth.manual{background:#fef2e6;color:#b26a12;border-color:#f0c68a}
 .meta{margin-top:6px;color:#8a94a6;font-size:11px}.mc{margin-right:10px;white-space:nowrap}.mc i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px;vertical-align:middle}.tk{color:#a7adb4}
 .filt{margin:2px 0 10px}.filt .fb{border:1px solid #cfd6db;background:#fff;color:#556;font-size:11.5px;padding:3px 10px;border-radius:12px;cursor:pointer;margin:2px 4px 2px 0}
 .filt .fb.on{background:#1f6b6b;color:#fff;border-color:#1f6b6b}
@@ -365,11 +389,18 @@ th,td{border:1px solid #eceff1;padding:7px 9px;text-align:left;vertical-align:to
 </style>"""
 
 JS = """<script>
-var IDX=__IDX__;var KEY='TCSTUDIO_STATUS';var NKEY='TCSTUDIO_NOTE';
+var IDX=__IDX__;var MSEED=__MSEED__;var KEY='TCSTUDIO_STATUS';var NKEY='TCSTUDIO_NOTE';var MKEY='TCSTUDIO_METHOD';
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
 function save(o){localStorage.setItem(KEY,JSON.stringify(o))}
 function loadN(){try{return JSON.parse(localStorage.getItem(NKEY)||'{}')}catch(e){return {}}}
 function saveN(o){localStorage.setItem(NKEY,JSON.stringify(o))}
+function loadM(){try{return JSON.parse(localStorage.getItem(MKEY)||'{}')}catch(e){return {}}}
+function saveM(o){localStorage.setItem(MKEY,JSON.stringify(o))}
+function methodOf(id){var m=loadM();return (id in m)?m[id]:(MSEED[id]||'')}
+var MLBL={'':'—','auto':'🤖 자동','manual':'✋ 수동'};
+function applyMethodOne(id){var b=document.querySelector(".mth[data-id='"+id+"']");if(!b)return;var v=methodOf(id);b.textContent=MLBL[v]||'—';b.classList.remove('auto','manual');if(v)b.classList.add(v);var row=document.getElementById('row-'+id);if(row)row.dataset.method=v||''}
+function applyAllM(){IDX.forEach(function(t){applyMethodOne(t.id)})}
+function cycleM(id){var m=loadM();var cur=methodOf(id);var nx=cur===''?'manual':(cur==='manual'?'auto':'');m[id]=nx;saveM(m);applyMethodOne(id);recompute();if(window._methodHook)window._methodHook(id,nx)}
 function setSt(id,v){var o=load();if(o[id]===v){delete o[id]}else{o[id]=v}save(o);applyOne(id,o[id]);recompute()}
 function setNote(id,v){var o=loadN();if(v){o[id]=v}else{delete o[id]}saveN(o);if(window._noteHook)window._noteHook(id,v)}
 function applyOne(id,v){var st=document.querySelector(".st[data-id='"+id+"']");if(st){st.querySelectorAll('.s').forEach(function(b){b.classList.toggle('on',b.dataset.v===v)})}
@@ -385,6 +416,8 @@ function recompute(){var o=load();var cats={},pw={'가능':{t:0},'부분':{t:0},
  document.getElementById('catsum').innerHTML=h;
  var pk=Object.keys(pw).map(function(k){var c={'가능':'#2e9e5b','부분':'#e0a01e','불가':'#9aa0a6'}[k];return "<span class='pill' style='background:"+c+"'>"+k+" "+pw[k].t+"건</span>"}).join(' ');
  document.getElementById('pwsum').innerHTML=pk;
+ var mc={auto:0,manual:0,none:0};IDX.forEach(function(t){var v=methodOf(t.id);mc[v==='auto'?'auto':(v==='manual'?'manual':'none')]++});
+ var ms=document.getElementById('methsum');if(ms)ms.innerHTML="<span class='pill' style='background:#1c5fb0'>🤖 자동확인 "+mc.auto+"건</span><span class='pill' style='background:#b26a12'>✋ 수동확인 "+mc.manual+"건</span><span class='pill' style='background:#9aa0a6'>미확인 "+mc.none+"건</span>";
  var fl=IDX.filter(function(t){return o[t.id]==='Fail'});
  document.getElementById('faillist').innerHTML=fl.length?fl.map(function(t){return "<a href='#row-"+t.id+"' onclick=\\"gotoTC('"+t.cat+"','"+t.id+"')\\">● "+t.id+" · "+t.screen+" · "+t.func+"</a>"}).join(''):'아직 Fail 없음';}
 function showTab(name,btn){document.querySelectorAll('.pane').forEach(function(p){p.classList.toggle('on',p.dataset.tab===name)});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on')});if(btn)btn.classList.add('on');window.scrollTo(0,0)}
@@ -393,21 +426,23 @@ function showMenu(code,btn){document.querySelectorAll('.mb').forEach(function(b)
 function initMenu(){menuTabs('SUMMARY')}
 function gotoTC(cat,id){var tb=null;document.querySelectorAll('.tab[data-menu]').forEach(function(b){if(b.textContent.trim()===cat)tb=b});if(tb){var mc=tb.dataset.menu;menuTabs(mc);document.querySelectorAll('.mb').forEach(function(b){b.classList.toggle('on',b.dataset.code===mc)});tb.click()}setTimeout(function(){var el=document.getElementById('row-'+id);if(el){el.scrollIntoView({block:'center'});el.style.outline='2px solid #d64545';setTimeout(function(){el.style.outline=''},1500)}},80)}
 function csvCell(c){c=(''+c).replace(/"/g,'""');return /[",\\n]/.test(c)?'"'+c+'"':c}
-function exportCSV(){var o=load(),no=loadN();var rows=[['TC ID','결과','비고','카테고리','화면','기능명']];IDX.forEach(function(t){rows.push([t.id,o[t.id]||'',no[t.id]||'',t.cat,t.screen,t.func])});
+function exportCSV(){var o=load(),no=loadN();var ml={'':'','auto':'자동','manual':'수동'};var rows=[['TC ID','결과','검증방법','비고','카테고리','화면','기능명']];IDX.forEach(function(t){rows.push([t.id,o[t.id]||'',ml[methodOf(t.id)]||'',no[t.id]||'',t.cat,t.screen,t.func])});
  var csv='\\ufeff'+rows.map(function(r){return r.map(csvCell).join(',')}).join('\\r\\n');var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='TC_결과.csv';a.click()}
-function importCSV(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var txt=r.result.replace(/^\\ufeff/,'');var lines=txt.split(/\\r?\\n/);var o={},no={};for(var i=1;i<lines.length;i++){if(!lines[i].trim())continue;var p=parseCSVLine(lines[i]);var id=(p[0]||'').trim(),st=(p[1]||'').trim(),nt=(p[2]||'').trim();if(id&&(st==='Pass'||st==='Fail'||st==='N/T'))o[id]=st;if(id&&nt)no[id]=nt}save(o);saveN(no);applyAll();applyNotes();recompute();alert('불러왔습니다 (결과 '+Object.keys(o).length+' · 비고 '+Object.keys(no).length+')')}catch(x){alert('형식 오류')}};r.readAsText(f)}
+function importCSV(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var txt=r.result.replace(/^\\ufeff/,'');var lines=txt.split(/\\r?\\n/);var hdr=parseCSVLine(lines[0]||'');var hasM=hdr.indexOf('검증방법')>=0;var mi=hasM?2:-1,ni=hasM?3:2;var o={},no={},mo={};var mmap={'자동':'auto','수동':'manual'};for(var i=1;i<lines.length;i++){if(!lines[i].trim())continue;var p=parseCSVLine(lines[i]);var id=(p[0]||'').trim(),st=(p[1]||'').trim(),nt=(p[ni]||'').trim();if(id&&(st==='Pass'||st==='Fail'||st==='N/T'))o[id]=st;if(id&&nt)no[id]=nt;if(hasM&&id){var mv=mmap[(p[mi]||'').trim()];if(mv)mo[id]=mv}}save(o);saveN(no);if(hasM)saveM(mo);applyAll();applyNotes();applyAllM();recompute();alert('불러왔습니다 (결과 '+Object.keys(o).length+' · 비고 '+Object.keys(no).length+')')}catch(x){alert('형식 오류')}};r.readAsText(f)}
 function resetStatus(){if(confirm('모든 Pass/Fail/N·T 를 초기화할까요? (비고는 유지)')){localStorage.removeItem(KEY);applyAll();recompute()}}
 function filt(btn){var pane=btn.closest('.pane');pane.querySelectorAll('.fb').forEach(function(b){b.classList.toggle('on',b===btn)});var f=btn.dataset.f;var o=load();
- pane.querySelectorAll('.tc').forEach(function(row){var id=row.id.slice(4);var show=true;if(f==='all')show=true;else if(f.indexOf('pw-')===0)show=row.dataset.pw===f.slice(3);else if(f==='st-Fail')show=o[id]==='Fail';else if(f==='st-none')show=!o[id];row.style.display=show?'':'none'});
+ pane.querySelectorAll('.tc').forEach(function(row){var id=row.id.slice(4);var show=true;if(f==='all')show=true;else if(f.indexOf('pw-')===0)show=row.dataset.pw===f.slice(3);else if(f==='m-auto')show=methodOf(id)==='auto';else if(f==='m-manual')show=methodOf(id)==='manual';else if(f==='m-none')show=!methodOf(id);else if(f==='st-Fail')show=o[id]==='Fail';else if(f==='st-none')show=!o[id];row.style.display=show?'':'none'});
  pane.querySelectorAll('h3.scr').forEach(function(h){var n=h.nextElementSibling,any=false;while(n&&!n.classList.contains('scr')){if(n.classList&&n.classList.contains('tc')&&n.style.display!=='none')any=true;n=n.nextElementSibling}h.style.display=any?'':'none'})}
-initMenu();applyAll();applyNotes();recompute();
+initMenu();applyAll();applyNotes();applyAllM();recompute();
 </script>"""
 
-DASH_OVERRIDE = ("<script>(function(){var S='/api/status',N='/api/note';var _set=setSt;"
+DASH_OVERRIDE = ("<script>(function(){var S='/api/status',N='/api/note',M='/api/method';var _set=setSt;"
  "setSt=function(id,v){_set(id,v);var o=load();fetch(S,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,status:o[id]||''})}).catch(function(){})};"
  "window._noteHook=function(id,v){fetch(N,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,note:v||''})}).catch(function(){})};"
+ "window._methodHook=function(id,v){fetch(M,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,method:v||''})}).catch(function(){})};"
  "fetch(S).then(function(r){return r.json()}).then(function(d){if(d&&typeof d==='object'){save(d);applyAll();recompute()}}).catch(function(){});"
  "fetch(N).then(function(r){return r.json()}).then(function(d){if(d&&typeof d==='object'){saveN(d);applyNotes()}}).catch(function(){});"
+ "fetch(M).then(function(r){return r.json()}).then(function(d){if(d&&typeof d==='object'){saveM(d);applyAllM();recompute()}}).catch(function(){});"
  "var b=document.querySelector('.hbtn');if(b){var s=document.createElement('span');s.style.cssText='margin-left:10px;color:#2e9e5b;font-size:11px;font-weight:700';s.textContent='● 서버 공유 모드';b.appendChild(s)}"
  "})();</script>")
 
@@ -419,7 +454,8 @@ def main():
     data = json.load(open(args.data, encoding="utf-8"))
     body, IDX, val, tcs = render(data)
     os.makedirs(args.outdir, exist_ok=True)
-    js = JS.replace("__IDX__", json.dumps(IDX, ensure_ascii=False))
+    mseed = {t["id"]: t["method"] for t in tcs if t.get("method")}
+    js = JS.replace("__IDX__", json.dumps(IDX, ensure_ascii=False)).replace("__MSEED__", json.dumps(mseed, ensure_ascii=False))
     open(os.path.join(args.outdir, "report.html"), "w", encoding="utf-8").write(CSS + body + js)
     open(os.path.join(args.outdir, "dashboard.html"), "w", encoding="utf-8").write(CSS + body + js + DASH_OVERRIDE)
     print("report.html / dashboard.html 생성 | TC %d | err %d warn %d" % (val["total"], len(val["errors"]), len(val["warnings"])))

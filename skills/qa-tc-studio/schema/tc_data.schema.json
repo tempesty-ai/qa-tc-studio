@@ -73,6 +73,7 @@
         "risk":         { "type": "string", "enum": ["High", "Medium", "Low"] },
         "confidence":   { "type": "string", "enum": ["High", "Med", "Low"] },
         "automation":   { "type": "string", "enum": ["가능", "부분", "불가"] },
+        "method":       { "type": "string", "enum": ["auto", "manual"], "description": "검증 방법 초기값(시드): auto=Playwright 자동확인, manual=수동확인. 리포트에서 토글 가능." },
         "techniques":   { "type": "array", "items": { "type": "string" }, "description": "설계기법: 경계값분석/동등분할/결정테이블/상태전이/조합/네거티브/명세기반" }
       }
     }

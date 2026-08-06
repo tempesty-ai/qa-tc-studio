@@ -18,6 +18,7 @@ HTML = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else os.path.join(HERE,
 DATADIR = os.path.dirname(HTML)
 STORE = os.path.join(DATADIR, "statuses.json")
 NOTESTORE = os.path.join(DATADIR, "notes.json")
+METHODSTORE = os.path.join(DATADIR, "methods.json")
 _lock = threading.Lock()
 
 def _load(path):
@@ -45,6 +46,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self._send(200, json.dumps(_load(STORE), ensure_ascii=False))
         elif self.path.startswith("/api/note"):
             self._send(200, json.dumps(_load(NOTESTORE), ensure_ascii=False))
+        elif self.path.startswith("/api/method"):
+            self._send(200, json.dumps(_load(METHODSTORE), ensure_ascii=False))
         else:
             try:
                 self._send(200, open(HTML, encoding="utf-8").read(), "text/html")
@@ -58,7 +61,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
         except Exception:
             j = {}
         path, key = (STORE, "status") if self.path.startswith("/api/status") else \
-                    (NOTESTORE, "note") if self.path.startswith("/api/note") else (None, None)
+                    (NOTESTORE, "note") if self.path.startswith("/api/note") else \
+                    (METHODSTORE, "method") if self.path.startswith("/api/method") else (None, None)
         if not path:
             return self._send(404, "{}")
         with _lock:
