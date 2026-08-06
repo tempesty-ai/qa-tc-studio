@@ -384,8 +384,8 @@ th,td{border:1px solid #eceff1;padding:7px 9px;text-align:left;vertical-align:to
 .modal-bx{background:#fff;border-radius:12px;padding:20px 22px;max-width:440px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center}
 .modal-t{font-size:17px;font-weight:800;color:#1f6b6b}
 .modal-sub{color:#667;font-size:12.5px;margin:6px 0 16px}
-.modal-btns{display:flex;gap:10px}
-.mbtn{flex:1;display:flex;flex-direction:column;gap:4px;align-items:center;border:2px solid #cfd6db;background:#fff;border-radius:10px;padding:16px 10px;cursor:pointer;font-size:15px;font-weight:800;color:#334}
+.modal-btns{display:flex;gap:12px;justify-content:center}
+.mbtn{flex:0 0 150px;display:flex;flex-direction:column;gap:4px;align-items:center;border:2px solid #cfd6db;background:#fff;border-radius:10px;padding:16px 10px;cursor:pointer;font-size:15px;font-weight:800;color:#334}
 .mbtn span{font-size:11px;font-weight:400;color:#889}
 .mbtn.auto:hover{border-color:#1c5fb0;background:#eaf3ff;color:#1c5fb0}
 .mbtn.manual:hover{border-color:#b26a12;background:#fef2e6;color:#b26a12}
