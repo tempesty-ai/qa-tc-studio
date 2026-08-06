@@ -30,8 +30,11 @@ Act as a QA test designer. Produce evidence-based test cases for the **AI draft 
 1. Map the product structure as menu > category > screen.
 2. Split each screen into sections such as list, create, update, delete, search, permission, and common behavior.
 3. Write cases using `schema/tc_data.schema.json`.
-4. Leave `risk`, `confidence`, `techniques`, and `automation` blank unless there is strong evidence; the renderer can auto-tag them.
-5. Validate. If working inside this repository, run:
+4. Treat result and verification method as separate axes:
+   - Result is recorded later in the report as `Pass`, `Fail`, or `N/T`.
+   - Verification method can be seeded with optional `"method": "auto"` for Playwright/automation-confirmed checks or `"method": "manual"` for QA/manual checks.
+5. Leave `risk`, `confidence`, `techniques`, and `automation` blank unless there is strong evidence; the renderer can auto-tag them.
+6. Validate. If working inside this repository, run:
 
 ```bash
 python scripts/validate_tc.py tc_data.json
@@ -39,13 +42,13 @@ python scripts/validate_tc.py tc_data.json
 
 If working from an installed skill in another project, run the bundled script by its skill-path location or copy the bundled `scripts/` folder into the working project first.
 
-6. Render. If working inside this repository, run:
+7. Render. If working inside this repository, run:
 
 ```bash
 python scripts/render_report.py tc_data.json -o out
 ```
 
-7. If a shared dashboard is needed:
+8. If a shared dashboard is needed:
 
 ```bash
 python scripts/serve_dashboard.py 8787 out/dashboard.html
@@ -76,7 +79,8 @@ python scripts/serve_dashboard.py 8787 out/dashboard.html
                   "func": "정상 등록",
                   "precondition": "관리자로 로그인되어 있다.",
                   "process": "1. 이름을 입력한다.\n2. [저장] 버튼을 클릭한다.",
-                  "expected": "'저장되었습니다' 메시지가 표시되고 목록에 추가된다."
+                  "expected": "'저장되었습니다' 메시지가 표시되고 목록에 추가된다.",
+                  "method": "auto"
                 }
               ]
             }
@@ -92,6 +96,8 @@ python scripts/serve_dashboard.py 8787 out/dashboard.html
 - The renderer generates TC IDs as `{id_prefix}-{menu.code}-{group.code?}-{screen.code}-{nnn}`.
 - Write steps from a normal user's point of view, beginning with `1.`.
 - Pair boundary values as valid/invalid ON/OUT cases when relevant.
+- Use `method` only as an initial verification-method seed. Users can still toggle it in the report.
+- Do not set `"method": "auto"` unless the case is or will be confirmed by automation such as Playwright.
 
 ## Bundled Resources
 

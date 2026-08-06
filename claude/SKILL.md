@@ -25,9 +25,10 @@ description: 제품 소스/명세/실제 화면을 대조해 테스트케이스(
    - 기대결과는 가능하면 소스의 **실제 메시지**를 옮긴다.
    - 경계값은 유효/무효 짝(ON/OUT)으로 만든다.
 4. **tc_data.json 저장**: `schema/tc_data.schema.json` 형식으로 작성. `risk/confidence/techniques/automation`은 생략하면 렌더러가 자동 태깅하므로, 명확한 근거가 있을 때만 직접 지정한다.
-5. **검증**: `python scripts/validate_tc.py tc_data.json` — error가 0이 될 때까지 수정.
-6. **렌더**: `python scripts/render_report.py tc_data.json -o out` → `out/report.html`(단독) + `out/dashboard.html`(공유).
-7. **공유가 필요하면**: `python scripts/serve_dashboard.py 8787 out/dashboard.html` 안내.
+5. **검증방법 시드**: 결과(Pass/Fail/N·T)와 검증방법은 별도 축이다. Playwright 등 자동 확인 예정/완료 TC는 `"method": "auto"`, QA 수동 확인 TC는 `"method": "manual"`로 둘 수 있다. 리포트에서 나중에 토글 가능하다.
+6. **검증**: `python scripts/validate_tc.py tc_data.json` — error가 0이 될 때까지 수정.
+7. **렌더**: `python scripts/render_report.py tc_data.json -o out` → `out/report.html`(단독) + `out/dashboard.html`(공유).
+8. **공유가 필요하면**: `python scripts/serve_dashboard.py 8787 out/dashboard.html` 안내.
 
 ## tc_data.json 최소 예시
 
@@ -46,7 +47,8 @@ description: 제품 소스/명세/실제 화면을 대조해 테스트케이스(
           "section": "등록", "func": "정상 등록",
           "precondition": "관리자로 로그인되어 있다.",
           "process": "1. 이름을 입력한다.\n2. [저장] 버튼을 클릭한다.",
-          "expected": "'저장되었습니다' 메시지가 표시되고 목록에 추가된다."
+          "expected": "'저장되었습니다' 메시지가 표시되고 목록에 추가된다.",
+          "method": "auto"
         }]
       }]
     }]
@@ -56,6 +58,7 @@ description: 제품 소스/명세/실제 화면을 대조해 테스트케이스(
 
 - flat 메뉴(카테고리 없음)는 `groups[].code`를 `""`로 둔다 → ID에서 생략된다.
 - TC ID는 렌더러가 `{id_prefix}-{menu.code}-{group.code?}-{screen.code}-{nnn}`로 자동 생성.
+- `method`는 검증방법 초기값이다. `"auto"`는 자동 확인, `"manual"`은 수동 확인이며 테스트 결과(Pass/Fail/N·T)와 독립이다.
 
 ## 안전 (반드시 준수)
 

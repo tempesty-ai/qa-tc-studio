@@ -25,6 +25,7 @@
    - 경계값: 유효/무효 짝(ON/OUT)
 4. `tc_data.json`을 `schema/tc_data.schema.json` 형식으로 저장한다.
    - `risk`/`confidence`/`techniques`/`automation`은 생략하면 렌더러가 규칙으로 자동 태깅. 명확한 근거가 있을 때만 지정.
+   - 결과(Pass/Fail/N·T)와 검증방법은 별도 축이다. Playwright 등 자동 확인 예정/완료 TC는 `"method": "auto"`, QA 수동 확인 TC는 `"method": "manual"`로 둘 수 있다.
 5. `python scripts/validate_tc.py tc_data.json` 로 검증 → error 0.
 6. `python scripts/render_report.py tc_data.json -o out` 로 리포트 생성.
 7. 공유 필요 시 `python scripts/serve_dashboard.py 8787 out/dashboard.html`.
@@ -53,7 +54,8 @@
                   "func": "정상 등록",
                   "precondition": "관리자로 로그인되어 있다.",
                   "process": "1. 이름을 입력한다.\n2. [저장] 버튼을 클릭한다.",
-                  "expected": "'저장되었습니다' 메시지가 표시되고 목록에 추가된다."
+                  "expected": "'저장되었습니다' 메시지가 표시되고 목록에 추가된다.",
+                  "method": "auto"
                 }
               ]
             }
@@ -68,6 +70,7 @@
 - flat 메뉴는 `groups[].code`를 `""`로 → ID에서 카테고리 세그먼트 생략.
 - TC ID 자동 생성: `{id_prefix}-{menu.code}-{group.code?}-{screen.code}-{nnn}`.
 - 각 절차 맨 앞의 "…화면으로 이동" 단계는 `auto_nav`가 자동 삽입(권한 섹션 제외).
+- `method`는 검증방법 초기값이다. `"auto"`는 자동 확인, `"manual"`은 수동 확인이며 테스트 결과와 독립이다.
 
 ## 완료 기준(Definition of Done)
 
@@ -75,4 +78,5 @@
 - [ ] 각 TC에 사전조건·번호절차·기대결과(가능하면 실제 메시지)
 - [ ] 근거 불명확 항목은 `gaps`로 분리
 - [ ] 파괴적/수동 항목은 자동화 "불가" 표기
+- [ ] 자동 확인/수동 확인 구분이 필요한 항목은 `method`로 시드
 - [ ] `render_report.py`로 report.html/dashboard.html 생성 확인
