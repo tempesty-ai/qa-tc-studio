@@ -254,9 +254,9 @@ def render(data):
 
     def status_ctrl(tid):
         return (f"<span class='st' data-id='{tid}'>"
-                f"<button class='s p' data-v='Pass' onclick=\"setSt('{tid}','Pass')\">Pass</button>"
-                f"<button class='s f' data-v='Fail' onclick=\"setSt('{tid}','Fail')\">Fail</button>"
-                f"<button class='s n' data-v='N/T' onclick=\"setSt('{tid}','N/T')\">N/T</button></span>"
+                f"<button class='s p' data-v='Pass' onclick=\"clickSt('{tid}','Pass')\">Pass</button>"
+                f"<button class='s f' data-v='Fail' onclick=\"clickSt('{tid}','Fail')\">Fail</button>"
+                f"<button class='s n' data-v='N/T' onclick=\"clickSt('{tid}','N/T')\">N/T</button></span>"
                 f"<button class='mth' data-id='{tid}' onclick=\"cycleM('{tid}')\" title='검증 방법 (자동/수동) — 클릭해 전환'>—</button>")
 
     for cat in cats:
@@ -323,6 +323,17 @@ def render(data):
         for k, v in rows: P.append(f"<tr><td><b>{esc(k)}</b></td><td>{esc(v)}</td></tr>")
         P.append("</table>")
     P.append("</section>")
+    # 검증방법 선택 모달 (Pass/Fail 시)
+    P.append("<div id='mmodal' class='modal-ov' onclick='if(event.target===this)closeModal()'>"
+             "<div class='modal-bx'>"
+             "<div class='modal-t'>이 결과를 어떻게 확인했나요?</div>"
+             "<div class='modal-sub' id='mmodal-sub'></div>"
+             "<div class='modal-btns'>"
+             "<button class='mbtn auto' onclick=\"confirmMethod('auto')\">🤖 자동 확인<span>Playwright 등 스크립트로 확인</span></button>"
+             "<button class='mbtn manual' onclick=\"confirmMethod('manual')\">✋ 수동 확인<span>직접 눌러가며 확인</span></button>"
+             "</div>"
+             "<button class='modal-cancel' onclick='closeModal()'>취소 (결과 기록 안 함)</button>"
+             "</div></div>")
     P.append("</div>")
 
     IDX = [{"id": t["id"], "cat": t["category"], "pw": t["pw"], "risk": t["risk"], "screen": t["screen"], "func": t["func"]} for t in tcs]
@@ -368,6 +379,17 @@ th,td{border:1px solid #eceff1;padding:7px 9px;text-align:left;vertical-align:to
 .s.p.on{background:#2e9e5b;color:#fff;border-color:#2e9e5b}.s.f.on{background:#d64545;color:#fff;border-color:#d64545}.s.n.on{background:#9aa0a6;color:#fff;border-color:#9aa0a6}
 .mth{margin-left:6px;border:1px solid #cfd6db;background:#fff;color:#889;font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;cursor:pointer;min-width:64px}
 .mth.auto{background:#eaf3ff;color:#1c5fb0;border-color:#9dc4f0}.mth.manual{background:#fef2e6;color:#b26a12;border-color:#f0c68a}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(20,30,40,.45);z-index:50;align-items:center;justify-content:center;padding:16px}
+.modal-ov.on{display:flex}
+.modal-bx{background:#fff;border-radius:12px;padding:20px 22px;max-width:440px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center}
+.modal-t{font-size:17px;font-weight:800;color:#1f6b6b}
+.modal-sub{color:#667;font-size:12.5px;margin:6px 0 16px}
+.modal-btns{display:flex;gap:10px}
+.mbtn{flex:1;display:flex;flex-direction:column;gap:4px;align-items:center;border:2px solid #cfd6db;background:#fff;border-radius:10px;padding:16px 10px;cursor:pointer;font-size:15px;font-weight:800;color:#334}
+.mbtn span{font-size:11px;font-weight:400;color:#889}
+.mbtn.auto:hover{border-color:#1c5fb0;background:#eaf3ff;color:#1c5fb0}
+.mbtn.manual:hover{border-color:#b26a12;background:#fef2e6;color:#b26a12}
+.modal-cancel{margin-top:14px;border:0;background:none;color:#99a;font-size:12px;cursor:pointer;text-decoration:underline}
 .meta{margin-top:6px;color:#8a94a6;font-size:11px}.mc{margin-right:10px;white-space:nowrap}.mc i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px;vertical-align:middle}.tk{color:#a7adb4}
 .filt{margin:2px 0 10px}.filt .fb{border:1px solid #cfd6db;background:#fff;color:#556;font-size:11.5px;padding:3px 10px;border-radius:12px;cursor:pointer;margin:2px 4px 2px 0}
 .filt .fb.on{background:#1f6b6b;color:#fff;border-color:#1f6b6b}
@@ -400,7 +422,18 @@ function methodOf(id){var m=loadM();return (id in m)?m[id]:(MSEED[id]||'')}
 var MLBL={'':'—','auto':'🤖 자동','manual':'✋ 수동'};
 function applyMethodOne(id){var b=document.querySelector(".mth[data-id='"+id+"']");if(!b)return;var v=methodOf(id);b.textContent=MLBL[v]||'—';b.classList.remove('auto','manual');if(v)b.classList.add(v);var row=document.getElementById('row-'+id);if(row)row.dataset.method=v||''}
 function applyAllM(){IDX.forEach(function(t){applyMethodOne(t.id)})}
-function cycleM(id){var m=loadM();var cur=methodOf(id);var nx=cur===''?'manual':(cur==='manual'?'auto':'');m[id]=nx;saveM(m);applyMethodOne(id);recompute();if(window._methodHook)window._methodHook(id,nx)}
+function setM(id,val){var m=loadM();m[id]=val;saveM(m);applyMethodOne(id);recompute();if(window._methodHook)window._methodHook(id,val)}
+function cycleM(id){var cur=methodOf(id);setM(id,cur===''?'manual':(cur==='manual'?'auto':''))}
+var _pending=null;
+function clickSt(id,v){var o=load();
+ if(o[id]===v){setSt(id,v);return}          // 같은 값 재클릭 = 해제
+ if(v==='N/T'){setSt(id,v);return}           // N/T(미실행)는 검증방법 불필요
+ _pending={id:id,v:v};                        // Pass/Fail = 검증방법 선택 모달
+ var t=null;IDX.forEach(function(x){if(x.id===id)t=x});
+ document.getElementById('mmodal-sub').innerHTML="<b style='color:"+(v==='Pass'?'#2e9e5b':'#d64545')+"'>"+v+"</b> · "+id+(t?" · "+t.func:"");
+ document.getElementById('mmodal').classList.add('on')}
+function confirmMethod(m){if(!_pending)return;var p=_pending;_pending=null;document.getElementById('mmodal').classList.remove('on');setSt(p.id,p.v);setM(p.id,m)}
+function closeModal(){_pending=null;document.getElementById('mmodal').classList.remove('on')}
 function setSt(id,v){var o=load();if(o[id]===v){delete o[id]}else{o[id]=v}save(o);applyOne(id,o[id]);recompute()}
 function setNote(id,v){var o=loadN();if(v){o[id]=v}else{delete o[id]}saveN(o);if(window._noteHook)window._noteHook(id,v)}
 function applyOne(id,v){var st=document.querySelector(".st[data-id='"+id+"']");if(st){st.querySelectorAll('.s').forEach(function(b){b.classList.toggle('on',b.dataset.v===v)})}
