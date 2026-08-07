@@ -181,6 +181,7 @@ def render(data):
             mb.append(f"<button class='mb{on}' data-code='{code}' onclick=\"showMenu('{code}',this)\">{esc(nm)}</button>")
         else:
             mb.append(f"<button class='mb' data-code='{code}' disabled>{esc(nm)} <span class='soon-badge'>준비중</span></button>")
+    P.append("<nav class='roundnav' id='roundnav'></nav>")   # 회차 전환 바 (JS가 채움)
     P.append("<nav class='menunav'>" + "".join(mb) + "</nav>")
 
     tabs = ["소개", "종합 결과"] + cats + ["설계맵", "판정 기준"]
@@ -234,7 +235,8 @@ def render(data):
     # 종합 결과
     rd = Counter(t['risk'] for t in tcs); cd = Counter(t['confidence'] for t in tcs); NT = max(1, len(tcs))
     P.append("<section class='pane' data-tab='종합 결과'>")
-    P.append("<h2>전체 진행 현황</h2><div id='overall'></div>")
+    P.append("<h2>전체 진행 현황 <span class='hint'>(현재 회차)</span></h2><div id='overall'></div>")
+    P.append("<h3>회차별 진행 비교</h3><div id='roundcmp'></div>")
     P.append("<h3>검증 방법 <span class='hint'>🤖 Playwright 자동 확인 / ✋ 수동 확인</span></h3><div id='methsum'></div>")
     P.append("<h3>카테고리별</h3><table class='sum'><thead><tr><th>카테고리</th><th>총</th><th>Pass</th><th>Fail</th><th>N/T</th><th>미실행</th><th>진행율</th></tr></thead><tbody id='catsum'></tbody></table>")
     P.append("<h3>자동화(Playwright) 커버리지</h3><div id='pwsum'></div>")
@@ -257,7 +259,8 @@ def render(data):
                 f"<button class='s p' data-v='Pass' onclick=\"clickSt('{tid}','Pass')\">Pass</button>"
                 f"<button class='s f' data-v='Fail' onclick=\"clickSt('{tid}','Fail')\">Fail</button>"
                 f"<button class='s n' data-v='N/T' onclick=\"clickSt('{tid}','N/T')\">N/T</button></span>"
-                f"<button class='mth' data-id='{tid}' onclick=\"cycleM('{tid}')\" title='검증 방법 (자동/수동) — 클릭해 전환'>—</button>")
+                f"<button class='mth' data-id='{tid}' onclick=\"cycleM('{tid}')\" title='검증 방법 (자동/수동) — 클릭해 전환'>—</button>"
+                f"<span class='rsum' data-id='{tid}' title='회차별 결과'></span>")
 
     for cat in cats:
         P.append(f"<section class='pane' data-tab='{esc(cat)}' data-menu='{cat_menu[cat]}'>")
@@ -377,6 +380,14 @@ th,td{border:1px solid #eceff1;padding:7px 9px;text-align:left;vertical-align:to
 .k{flex:0 0 66px;color:#889;font-weight:700;border-right:1px solid #d7dde2;padding-right:9px}.v{flex:1}.proc{white-space:normal}
 .st{display:inline-flex;gap:2px;margin-right:6px}.s{border:1px solid #cfd6db;background:#fff;color:#556;font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;cursor:pointer}
 .s.p.on{background:#2e9e5b;color:#fff;border-color:#2e9e5b}.s.f.on{background:#d64545;color:#fff;border-color:#d64545}.s.n.on{background:#9aa0a6;color:#fff;border-color:#9aa0a6}
+.roundnav{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 2px}
+.roundnav .rlab{font-size:12px;font-weight:700;color:#889;margin-right:4px}
+.rbtn{border:1px solid #cfd6db;background:#fff;color:#556;padding:5px 14px;border-radius:14px;cursor:pointer;font-size:12.5px;font-weight:700}
+.rbtn.on{background:#7a4ecb;color:#fff;border-color:#7a4ecb}
+.rbtn.add{color:#7a4ecb;border-style:dashed}
+.rsum{margin-left:8px;display:inline-flex;gap:3px;vertical-align:middle}
+.rsum .rc{font-size:10.5px;color:#aab;background:#f2f4f6;border-radius:8px;padding:0 5px;font-weight:700}
+.rsum .rc.cur{outline:1.5px solid #7a4ecb}
 .mth{margin-left:6px;border:1px solid #cfd6db;background:#fff;color:#889;font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;cursor:pointer;min-width:64px}
 .mth.auto{background:#eaf3ff;color:#1c5fb0;border-color:#9dc4f0}.mth.manual{background:#fef2e6;color:#b26a12;border-color:#f0c68a}
 .modal-ov{display:none;position:fixed;inset:0;background:rgba(20,30,40,.45);z-index:50;align-items:center;justify-content:center;padding:16px}
@@ -412,12 +423,28 @@ th,td{border:1px solid #eceff1;padding:7px 9px;text-align:left;vertical-align:to
 
 JS = """<script>
 var IDX=__IDX__;var MSEED=__MSEED__;var KEY='TCSTUDIO_STATUS';var NKEY='TCSTUDIO_NOTE';var MKEY='TCSTUDIO_METHOD';
-function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
-function save(o){localStorage.setItem(KEY,JSON.stringify(o))}
-function loadN(){try{return JSON.parse(localStorage.getItem(NKEY)||'{}')}catch(e){return {}}}
-function saveN(o){localStorage.setItem(NKEY,JSON.stringify(o))}
-function loadM(){try{return JSON.parse(localStorage.getItem(MKEY)||'{}')}catch(e){return {}}}
-function saveM(o){localStorage.setItem(MKEY,JSON.stringify(o))}
+var RKEY='TCSTUDIO_ROUND';var RLKEY='TCSTUDIO_ROUNDLIST';var DEF_ROUNDS=['1차','2차','3차'];
+// 회차별 중첩 저장: localStorage[KEY] = { '1차':{id:val}, '2차':{...} }
+function nested(k){try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){return {}}}
+function curRound(){return localStorage.getItem(RKEY)||'1차'}
+function migrateFlat(k){var a=nested(k);var keys=Object.keys(a);if(keys.length&&keys.every(function(x){return a[x]===null||typeof a[x]!=='object'})){localStorage.setItem(k,JSON.stringify({'1차':a}))}}
+function roundList(){var extra=[];try{extra=JSON.parse(localStorage.getItem(RLKEY)||'[]')}catch(e){}
+ var set=DEF_ROUNDS.slice();extra.forEach(function(r){if(set.indexOf(r)<0)set.push(r)});
+ [KEY,NKEY,MKEY].forEach(function(k){var a=nested(k);Object.keys(a).forEach(function(r){if(a[r]&&typeof a[r]==='object'&&set.indexOf(r)<0)set.push(r)})});return set}
+function load(){return nested(KEY)[curRound()]||{}}
+function save(o){var a=nested(KEY);a[curRound()]=o;localStorage.setItem(KEY,JSON.stringify(a))}
+function loadN(){return nested(NKEY)[curRound()]||{}}
+function saveN(o){var a=nested(NKEY);a[curRound()]=o;localStorage.setItem(NKEY,JSON.stringify(a))}
+function loadM(){return nested(MKEY)[curRound()]||{}}
+function saveM(o){var a=nested(MKEY);a[curRound()]=o;localStorage.setItem(MKEY,JSON.stringify(a))}
+function renderRounds(){var nav=document.getElementById('roundnav');if(!nav)return;var cur=curRound();
+ nav.innerHTML="<span class='rlab'>회차</span>"+roundList().map(function(r){return "<button class='rbtn"+(r===cur?' on':'')+"' onclick=\\"switchRound('"+r+"')\\">"+r+"</button>"}).join('')+"<button class='rbtn add' onclick='addRound()'>+ 회차</button>"}
+function refreshRound(){renderRounds();applyAll();applyNotes();applyAllM();applyRoundSummaries();recompute()}
+function switchRound(r){localStorage.setItem(RKEY,r);refreshRound()}
+function addRound(){var name=prompt('추가할 회차 이름',''+(roundList().length+1)+'차');if(!name)return;var extra=[];try{extra=JSON.parse(localStorage.getItem(RLKEY)||'[]')}catch(e){}if(extra.indexOf(name)<0)extra.push(name);localStorage.setItem(RLKEY,JSON.stringify(extra));localStorage.setItem(RKEY,name);refreshRound()}
+function applyRoundSummaries(){var list=roundList();var allS=nested(KEY);var cur=curRound();
+ document.querySelectorAll('.rsum').forEach(function(el){var id=el.dataset.id;
+  el.innerHTML=list.map(function(r){var v=(allS[r]||{})[id]||'';var ic=v==='Pass'?'✅':(v==='Fail'?'❌':(v==='N/T'?'▪':'·'));return "<span class='rc"+(r===cur?' cur':'')+"' title='"+r+": "+(v||'미실행')+"'>"+r.replace('차','')+ic+"</span>"}).join('')})}
 function methodOf(id){var m=loadM();return (id in m)?m[id]:(MSEED[id]||'')}
 var MLBL={'':'—','auto':'🤖 자동','manual':'✋ 수동'};
 function applyMethodOne(id){var b=document.querySelector(".mth[data-id='"+id+"']");if(!b)return;var v=methodOf(id);b.textContent=MLBL[v]||'—';b.classList.remove('auto','manual');if(v)b.classList.add(v);var row=document.getElementById('row-'+id);if(row)row.dataset.method=v||''}
@@ -434,7 +461,7 @@ function clickSt(id,v){var o=load();
  document.getElementById('mmodal').classList.add('on')}
 function confirmMethod(m){if(!_pending)return;var p=_pending;_pending=null;document.getElementById('mmodal').classList.remove('on');setSt(p.id,p.v);setM(p.id,m)}
 function closeModal(){_pending=null;document.getElementById('mmodal').classList.remove('on')}
-function setSt(id,v){var o=load();if(o[id]===v){delete o[id]}else{o[id]=v}save(o);applyOne(id,o[id]);recompute()}
+function setSt(id,v){var o=load();if(o[id]===v){delete o[id]}else{o[id]=v}save(o);applyOne(id,o[id]);applyRoundSummaries();recompute()}
 function setNote(id,v){var o=loadN();if(v){o[id]=v}else{delete o[id]}saveN(o);if(window._noteHook)window._noteHook(id,v)}
 function applyOne(id,v){var st=document.querySelector(".st[data-id='"+id+"']");if(st){st.querySelectorAll('.s').forEach(function(b){b.classList.toggle('on',b.dataset.v===v)})}
  var row=document.getElementById('row-'+id);if(row){row.classList.remove('Pass','Fail','NT');if(v==='Pass')row.classList.add('Pass');else if(v==='Fail')row.classList.add('Fail');else if(v==='N/T')row.classList.add('NT')}}
@@ -451,6 +478,11 @@ function recompute(){var o=load();var cats={},pw={'가능':{t:0},'부분':{t:0},
  document.getElementById('pwsum').innerHTML=pk;
  var mc={auto:0,manual:0,none:0};IDX.forEach(function(t){var v=methodOf(t.id);mc[v==='auto'?'auto':(v==='manual'?'manual':'none')]++});
  var ms=document.getElementById('methsum');if(ms)ms.innerHTML="<span class='pill' style='background:#1c5fb0'>🤖 자동확인 "+mc.auto+"건</span><span class='pill' style='background:#b26a12'>✋ 수동확인 "+mc.manual+"건</span><span class='pill' style='background:#9aa0a6'>미확인 "+mc.none+"건</span>";
+ var rc=document.getElementById('roundcmp');if(rc){var list=roundList();var allS=nested(KEY);var cur=curRound();var prevFail=null;
+  var rows2=list.map(function(r){var s=allS[r]||{};var p=0,f=0,nt=0,failset={};IDX.forEach(function(t){var v=s[t.id];if(v==='Pass')p++;else if(v==='Fail'){f++;failset[t.id]=1}else if(v==='N/T')nt++});var done=p+f+nt;var pct=Math.round(done/IDX.length*100);
+   var fixed='';if(prevFail){var fx=0;Object.keys(prevFail).forEach(function(id){if(s[id]==='Pass')fx++});fixed=fx?("<span style='color:#2e9e5b'>▲"+fx+" 해결</span>"):'-'}prevFail=failset;
+   return "<tr"+(r===cur?" style='background:#f2ecfb;font-weight:700'":"")+"><td>"+r+"</td><td style='color:#2e9e5b'>"+p+"</td><td style='color:#d64545'>"+f+"</td><td>"+nt+"</td><td>"+(IDX.length-done)+"</td><td><div class='bar'><i style='width:"+pct+"%'></i></div>"+pct+"%</td><td>"+fixed+"</td></tr>"}).join('');
+  rc.innerHTML="<table class='sum'><thead><tr><th>회차</th><th>Pass</th><th>Fail</th><th>N/T</th><th>미실행</th><th>진행율</th><th>직전 Fail 해결</th></tr></thead><tbody>"+rows2+"</tbody></table>";}
  var fl=IDX.filter(function(t){return o[t.id]==='Fail'});
  document.getElementById('faillist').innerHTML=fl.length?fl.map(function(t){return "<a href='#row-"+t.id+"' onclick=\\"gotoTC('"+t.cat+"','"+t.id+"')\\">● "+t.id+" · "+t.screen+" · "+t.func+"</a>"}).join(''):'아직 Fail 없음';}
 function showTab(name,btn){document.querySelectorAll('.pane').forEach(function(p){p.classList.toggle('on',p.dataset.tab===name)});document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on')});if(btn)btn.classList.add('on');window.scrollTo(0,0)}
@@ -459,23 +491,28 @@ function showMenu(code,btn){document.querySelectorAll('.mb').forEach(function(b)
 function initMenu(){menuTabs('SUMMARY')}
 function gotoTC(cat,id){var tb=null;document.querySelectorAll('.tab[data-menu]').forEach(function(b){if(b.textContent.trim()===cat)tb=b});if(tb){var mc=tb.dataset.menu;menuTabs(mc);document.querySelectorAll('.mb').forEach(function(b){b.classList.toggle('on',b.dataset.code===mc)});tb.click()}setTimeout(function(){var el=document.getElementById('row-'+id);if(el){el.scrollIntoView({block:'center'});el.style.outline='2px solid #d64545';setTimeout(function(){el.style.outline=''},1500)}},80)}
 function csvCell(c){c=(''+c).replace(/"/g,'""');return /[",\\n]/.test(c)?'"'+c+'"':c}
-function exportCSV(){var o=load(),no=loadN();var ml={'':'','auto':'자동','manual':'수동'};var rows=[['TC ID','결과','검증방법','비고','카테고리','화면','기능명']];IDX.forEach(function(t){rows.push([t.id,o[t.id]||'',ml[methodOf(t.id)]||'',no[t.id]||'',t.cat,t.screen,t.func])});
+function exportCSV(){var o=load(),no=loadN();var ml={'':'','auto':'자동','manual':'수동'};var rows=[['TC ID','회차','결과','검증방법','비고','카테고리','화면','기능명']];IDX.forEach(function(t){rows.push([t.id,curRound(),o[t.id]||'',ml[methodOf(t.id)]||'',no[t.id]||'',t.cat,t.screen,t.func])});
  var csv='\\ufeff'+rows.map(function(r){return r.map(csvCell).join(',')}).join('\\r\\n');var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='TC_결과.csv';a.click()}
-function importCSV(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var txt=r.result.replace(/^\\ufeff/,'');var lines=txt.split(/\\r?\\n/);var hdr=parseCSVLine(lines[0]||'');var hasM=hdr.indexOf('검증방법')>=0;var mi=hasM?2:-1,ni=hasM?3:2;var o={},no={},mo={};var mmap={'자동':'auto','수동':'manual'};for(var i=1;i<lines.length;i++){if(!lines[i].trim())continue;var p=parseCSVLine(lines[i]);var id=(p[0]||'').trim(),st=(p[1]||'').trim(),nt=(p[ni]||'').trim();if(id&&(st==='Pass'||st==='Fail'||st==='N/T'))o[id]=st;if(id&&nt)no[id]=nt;if(hasM&&id){var mv=mmap[(p[mi]||'').trim()];if(mv)mo[id]=mv}}save(o);saveN(no);if(hasM)saveM(mo);applyAll();applyNotes();applyAllM();recompute();alert('불러왔습니다 (결과 '+Object.keys(o).length+' · 비고 '+Object.keys(no).length+')')}catch(x){alert('형식 오류')}};r.readAsText(f)}
-function resetStatus(){if(confirm('모든 Pass/Fail/N·T 를 초기화할까요? (비고는 유지)')){localStorage.removeItem(KEY);applyAll();recompute()}}
+function importCSV(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var txt=r.result.replace(/^\\ufeff/,'');var lines=txt.split(/\\r?\\n/);var hdr=parseCSVLine(lines[0]||'');
+ var hasR=hdr.indexOf('회차')>=0;var si=hasR?2:1;var mi=hdr.indexOf('검증방법');var ni=hdr.indexOf('비고');
+ var o={},no={},mo={};var mmap={'자동':'auto','수동':'manual'};
+ for(var i=1;i<lines.length;i++){if(!lines[i].trim())continue;var p=parseCSVLine(lines[i]);var id=(p[0]||'').trim(),st=(p[si]||'').trim(),nt=ni>=0?(p[ni]||'').trim():'';if(id&&(st==='Pass'||st==='Fail'||st==='N/T'))o[id]=st;if(id&&nt)no[id]=nt;if(mi>=0&&id){var mv=mmap[(p[mi]||'').trim()];if(mv)mo[id]=mv}}
+ save(o);saveN(no);if(mi>=0)saveM(mo);applyAll();applyNotes();applyAllM();applyRoundSummaries();recompute();alert('현재 회차('+curRound()+')로 불러왔습니다 (결과 '+Object.keys(o).length+' · 비고 '+Object.keys(no).length+')')}catch(x){alert('형식 오류')}};r.readAsText(f)}
+function resetStatus(){if(confirm('현재 회차('+curRound()+')의 Pass/Fail/N·T 를 초기화할까요? (비고는 유지)')){save({});applyAll();applyRoundSummaries();recompute()}}
 function filt(btn){var pane=btn.closest('.pane');pane.querySelectorAll('.fb').forEach(function(b){b.classList.toggle('on',b===btn)});var f=btn.dataset.f;var o=load();
  pane.querySelectorAll('.tc').forEach(function(row){var id=row.id.slice(4);var show=true;if(f==='all')show=true;else if(f.indexOf('pw-')===0)show=row.dataset.pw===f.slice(3);else if(f==='m-auto')show=methodOf(id)==='auto';else if(f==='m-manual')show=methodOf(id)==='manual';else if(f==='m-none')show=!methodOf(id);else if(f==='st-Fail')show=o[id]==='Fail';else if(f==='st-none')show=!o[id];row.style.display=show?'':'none'});
  pane.querySelectorAll('h3.scr').forEach(function(h){var n=h.nextElementSibling,any=false;while(n&&!n.classList.contains('scr')){if(n.classList&&n.classList.contains('tc')&&n.style.display!=='none')any=true;n=n.nextElementSibling}h.style.display=any?'':'none'})}
-initMenu();applyAll();applyNotes();applyAllM();recompute();
+migrateFlat(KEY);migrateFlat(NKEY);migrateFlat(MKEY);
+initMenu();renderRounds();applyAll();applyNotes();applyAllM();applyRoundSummaries();recompute();
 </script>"""
 
 DASH_OVERRIDE = ("<script>(function(){var S='/api/status',N='/api/note',M='/api/method';var _set=setSt;"
- "setSt=function(id,v){_set(id,v);var o=load();fetch(S,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,status:o[id]||''})}).catch(function(){})};"
- "window._noteHook=function(id,v){fetch(N,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,note:v||''})}).catch(function(){})};"
- "window._methodHook=function(id,v){fetch(M,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,method:v||''})}).catch(function(){})};"
- "fetch(S).then(function(r){return r.json()}).then(function(d){if(d&&typeof d==='object'){save(d);applyAll();recompute()}}).catch(function(){});"
- "fetch(N).then(function(r){return r.json()}).then(function(d){if(d&&typeof d==='object'){saveN(d);applyNotes()}}).catch(function(){});"
- "fetch(M).then(function(r){return r.json()}).then(function(d){if(d&&typeof d==='object'){saveM(d);applyAllM();recompute()}}).catch(function(){});"
+ "function P(u,b){fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).catch(function(){})}"
+ "setSt=function(id,v){_set(id,v);var o=load();P(S,{round:curRound(),id:id,status:o[id]||''})};"
+ "window._noteHook=function(id,v){P(N,{round:curRound(),id:id,note:v||''})};"
+ "window._methodHook=function(id,v){P(M,{round:curRound(),id:id,method:v||''})};"
+ "function pull(u,k,after){fetch(u).then(function(r){return r.json()}).then(function(d){if(d&&typeof d==='object'){localStorage.setItem(k,JSON.stringify(d));if(after)after()}}).catch(function(){})}"
+ "pull(S,KEY,function(){refreshRound()});pull(N,NKEY,function(){applyNotes()});pull(M,MKEY,function(){applyAllM();recompute()});"
  "var b=document.querySelector('.hbtn');if(b){var s=document.createElement('span');s.style.cssText='margin-left:10px;color:#2e9e5b;font-size:11px;font-weight:700';s.textContent='● 서버 공유 모드';b.appendChild(s)}"
  "})();</script>")
 

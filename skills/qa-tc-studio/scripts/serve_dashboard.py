@@ -65,11 +65,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     (METHODSTORE, "method") if self.path.startswith("/api/method") else (None, None)
         if not path:
             return self._send(404, "{}")
+        rnd = j.get("round", "1차")
         with _lock:
             d = _load(path); tid = j.get("id")
             if tid:
-                if j.get(key): d[tid] = j[key]
-                else: d.pop(tid, None)
+                r = d.get(rnd)
+                if not isinstance(r, dict): r = {}
+                if j.get(key): r[tid] = j[key]
+                else: r.pop(tid, None)
+                d[rnd] = r
                 _save(path, d)
         self._send(200, '{"ok":true}')
 
