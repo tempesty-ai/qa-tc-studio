@@ -364,7 +364,7 @@ h2{font-size:16px;margin:22px 0 10px;border-left:4px solid #1f6b6b;padding-left:
 table{border-collapse:collapse;width:100%;background:#fff;border:1px solid #e2e6ea;border-radius:8px;overflow:hidden;margin:4px 0}
 th,td{border:1px solid #eceff1;padding:7px 9px;text-align:left;vertical-align:top}th{background:#1f6b6b;color:#fff}
 .hm td{text-align:center}.hm .sn{text-align:left;color:#333;font-weight:600}.hm .z{background:#f7f8f9}.hm .tot{font-weight:700}
-.sum td{text-align:center}.sum td:first-child{text-align:left;font-weight:700}
+.sum th,.sum td{text-align:center;vertical-align:middle}.sum td:first-child{font-weight:700}.sum .bar{margin:0 auto}
 .bar{height:12px;border-radius:6px;background:#e6eaed;overflow:hidden;min-width:120px}.bar>i{display:block;height:100%;background:#2e9e5b}
 .tc{background:#fff;border:1px solid #e2e6ea;border-left:5px solid #cfd6db;border-radius:6px;padding:9px 12px;margin:8px 0;display:flex;gap:12px;align-items:stretch}
 .tc-main{flex:1;min-width:0}.tc-note{flex:0 0 210px;display:flex;flex-direction:column}
