@@ -1,0 +1,477 @@
+
+
+.runjob {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 1rem 1.1rem;
+  margin: 1rem 0;
+}
+
+
+
+.runexec {
+  margin: 0.9rem 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.runexec-go {
+  display: flex;
+  
+  align-items: center;
+  justify-content: flex-end;
+  
+  gap: 1.4rem;
+  margin: 0;
+  flex-wrap: wrap;
+  
+  position: relative;
+}
+
+.runexec-why {
+  max-width: var(--measure);
+  margin: 0.5rem 0 0;
+  text-align: right;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--muted);
+}
+.runexec-why[role="alert"] { color: var(--text); }
+
+
+.runjob-opts {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  flex: none;
+}
+
+
+.runjob-opt {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  
+  min-height: 1.9rem;
+}
+
+.runjob-optpick {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  cursor: pointer;
+}
+.runjob-opt-name {
+  font-size: var(--fs-body);
+  color: var(--text);
+}
+
+
+.opttip { flex: none; }
+
+
+.opttip > summary {
+  list-style: none;
+  position: relative;
+  display: grid;
+  place-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 1px solid var(--muted);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  font-weight: var(--fw-label);
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition: color 120ms ease, border-color 120ms ease, background-color 120ms ease;
+}
+.opttip > summary::-webkit-details-marker { display: none; }
+
+.opttip > summary::after {
+  content: "";
+  position: absolute;
+  inset: -0.375rem;
+}
+.opttip > summary:hover { color: var(--text); border-color: var(--accent); }
+.opttip > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.opttip[open] > summary {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.opttip-body {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 20;
+  margin: 0;
+  width: max-content;
+  max-width: min(24rem, 100%);
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  
+  background: var(--bg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opttip > summary { transition: none; }
+}
+
+
+@media (pointer: coarse) {
+  .opttip > summary::after { inset: -0.8rem; }
+  .runjob-opt { min-height: 2.75rem; }
+  .runjob-opts { gap: 0.5rem; }
+}
+
+
+@media (max-width: 560px) {
+  .runexec-go { align-items: flex-start; }
+}
+
+.runjob-note,
+.runjob-warn,
+.runjob-debt,
+.runjob-elsewhere,
+.runjob-state {
+  
+  max-width: var(--measure);
+  margin: 0.6rem 0 0;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+
+.runjob-note {
+  color: var(--muted);
+}
+
+.runjob-warn {
+  color: var(--text);
+  border-left: 3px solid var(--depth-unreviewed);
+  padding-left: 0.7rem;
+}
+
+
+.runjob-debt {
+  color: var(--text);
+  border-left: 3px solid var(--depth-unreviewed);
+  padding-left: 0.7rem;
+}
+
+
+.runjob-elsewhere {
+  color: var(--text-2);
+  border-left: 3px solid var(--line);
+  padding-left: 0.7rem;
+}
+
+.runjob-state {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.runjob-when {
+  color: var(--muted);
+  font-size: var(--fs-small);
+}
+
+
+.jobbadge {
+  display: inline-block;
+  padding: 0.16rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--chip);
+  color: var(--text);
+  font-size: var(--fs-small);
+  white-space: nowrap;
+}
+
+.jobbadge.job-running,
+.jobbadge.job-queued {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.jobbadge.job-done {
+  color: var(--muted);
+}
+
+.jobbadge.job-cancelled {
+  border-color: var(--depth-ran);
+  color: var(--muted);
+}
+
+.jobbadge.job-orphaned,
+.jobbadge.job-failed {
+  border-color: var(--depth-unreviewed);
+  color: var(--depth-unreviewed);
+}
+
+
+
+.jobprog {
+  max-width: var(--measure);
+  margin-top: 0.85rem;
+}
+
+
+.jobprog-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 0.4rem;
+}
+
+.jobcount {
+  color: var(--text);
+  font-size: var(--fs-body);
+  
+  font-variant-numeric: tabular-nums;
+}
+
+
+.jobcount strong {
+  font-size: 1.35rem;
+  font-weight: var(--fw-label);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.jobcount-of {
+  color: var(--muted);
+}
+
+
+.jobclock {
+  display: none;
+}
+
+.jobclock.is-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: none;
+  color: var(--muted);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+
+.jobclock.is-live::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: jobpulse 1.9s ease-in-out infinite;
+}
+
+@keyframes jobpulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.82); }
+}
+
+.jobbar {
+  position: relative;
+  display: flex;
+  
+  height: 1.125rem;
+  
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  
+  background: var(--bg);
+  overflow: hidden;
+}
+
+
+.jobseg,
+.jobrest {
+  
+  min-width: 5.5px;
+  
+  transition: flex-grow 460ms cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+.jobseg {
+  background: var(--seg);
+  
+  box-shadow: inset -1.5px 0 0 var(--bg);
+}
+
+.jobrest {
+  background: transparent;
+  
+  box-shadow: none;
+  
+  position: relative;
+  overflow: hidden;
+}
+
+
+.jobseg[hidden],
+.jobrest[hidden],
+.jobres[hidden] { display: none; }
+
+
+.jres-pass  { --seg: var(--res-pass); }
+.jres-fail  { --seg: var(--res-fail); }
+.jres-skip  { --seg: var(--res-skip); }
+.jres-other { --seg: var(--muted); }
+.jres-none  { --seg: var(--res-none); }
+
+
+.jobseg.jres-none,
+.jobres.jres-none .jobswatch {
+  background-color: var(--res-none);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.16) 0 2px,
+    transparent 2px 6px
+  );
+}
+
+
+.jobrest::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 6px 1px var(--accent);
+}
+
+
+.jobrest::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 42%;
+  min-width: 60px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 26%, transparent),
+    transparent
+  );
+  animation: jobflow 2.4s linear infinite;
+}
+
+@keyframes jobflow {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(340%); }
+}
+
+
+.joblegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0.45rem 0 0;
+}
+
+.jobres {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: var(--fs-small);
+  white-space: nowrap;
+}
+
+.jobres b {
+  color: var(--text);
+  font-weight: var(--fw-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.jobswatch {
+  flex: none;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: var(--seg);
+  box-shadow: 0 0 0 1px var(--bg);
+}
+
+
+.jobprog-note {
+  max-width: var(--measure);
+  margin: 0.6rem 0 0;
+  padding-left: 0.7rem;
+  border-left: 3px solid var(--res-none);
+  color: var(--muted);
+  font-size: var(--fs-small);
+  line-height: 1.55;
+}
+
+.jobprog[data-mode="wait"] .jobprog-note {
+  border-left-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  
+  .jobrest::after {
+    animation: none;
+    opacity: 0;
+  }
+
+  
+  .jobclock.is-live::before {
+    animation: none;
+    opacity: 1;
+  }
+
+  .jobseg,
+  .jobrest { transition: none; }
+}
+
+.runjob-log {
+  margin-top: 0.8rem;
+}
+
+.runjob-log summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: var(--fs-body);
+}
+
+.runjob-log pre {
+  margin: 0.5rem 0 0;
+  padding: 0.7rem 0.8rem;
+  max-height: 20rem;
+  overflow: auto;
+  
+  overscroll-behavior: contain;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

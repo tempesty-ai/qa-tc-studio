@@ -1,0 +1,759 @@
+<!-- 이 파일은 정적 데모입니다. 데이터는 전부 가짜이고 버튼은 동작하지 않습니다. -->
+<!doctype html>
+<html lang="ko"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QA Bench</title>
+  
+  
+  <script>
+    (function () {
+      var r = document.documentElement;
+      try {
+        if (localStorage.getItem("tms.ui.theme") === "light") {
+          r.setAttribute("data-theme", "light");
+        }
+        if (localStorage.getItem("tms.ui.lnb") === "fold") {
+          r.setAttribute("data-lnb", "fold");
+        }
+      } catch (e) { /* 사이트 데이터 차단 — 다크 · 펼친 채로 간다 */ }
+    })();
+  </script>
+  <link rel="stylesheet" href="static/fonts.css">
+  <link rel="stylesheet" href="static/styles.css">
+  <link rel="stylesheet" href="static/drawer.css">
+  <link rel="stylesheet" href="static/shot.css">
+  <link rel="stylesheet" href="static/workbench.css">
+  
+  <link rel="stylesheet" href="static/light.css">
+</head>
+
+
+
+<body class="app-shell wb-bench">
+  <aside class="lnb">
+    
+    <div class="lnb-top">
+      <a class="brand" href="dashboard.html">
+        <span class="brand-mark" aria-hidden="true">Q</span>
+        <span class="brand-text">
+          <b>QA Bench</b>
+          <span class="brand-sub">Demo</span>
+        </span>
+      </a>
+      
+      <button type="button" class="lnb-fold" data-lnb-fold="" aria-pressed="false">
+        <svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <rect x="1.8" y="2.8" width="12.4" height="10.4" rx="1.8"></rect>
+  <path d="M6.4 2.8v10.4"></path></svg>
+        <span class="sr-only">사이드바 접기</span>
+      </button>
+    </div>
+    
+    
+    
+    
+    <button type="button" class="lnb-proj-mini" data-lnb-open="">
+      <span aria-hidden="true">I</span>
+      <span class="sr-only">Sample Product — 사이드바를 펼칩니다</span>
+    </button>
+    <div class="lnb-proj">
+      <p class="lnb-proj-cap">프로젝트</p>
+      
+      <form method="post" class="lnb-proj-form" onsubmit="return false">
+        <input type="hidden" name="back" value="/dashboard">
+        <label class="sr-only" for="proj-pick">볼 프로젝트</label>
+        <select id="proj-pick" name="project_id" onchange="this.form.submit()">
+          
+          <option value="1" selected="">Sample Product</option>
+          
+          <option value="6">Sample Product</option>
+          
+          <option value="4">Sample Product</option>
+          
+          <option value="5">Sample Product</option>
+          
+        </select>
+        <noscript><button type="submit" class="btn btn-sm">이동</button></noscript>
+      </form>
+      
+    </div>
+    
+
+    <nav class="lnb-nav">
+      <p class="lnb-group" id="lnbg-overview">개요</p>
+      <div class="lnb-set" role="group" aria-labelledby="lnbg-overview">
+        <a href="dashboard.html" class="lnb-link active"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <rect x="2.2" y="2.2" width="5.2" height="5.2" rx="1.2"></rect><rect x="8.6" y="2.2" width="5.2" height="5.2" rx="1.2"></rect>
+  <rect x="2.2" y="8.6" width="5.2" height="5.2" rx="1.2"></rect><rect x="8.6" y="8.6" width="5.2" height="5.2" rx="1.2"></rect></svg><span>대시보드</span></a>
+        <a href="milestones.html" class="lnb-link "><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M3.7 14.4V2.2"></path><path d="M3.7 3h8.6l-2 2.9 2 2.9H3.7"></path></svg><span>마일스톤</span></a>
+      </div>
+      <p class="lnb-group" id="lnbg-tc">테스트 케이스</p>
+      <div class="lnb-set" role="group" aria-labelledby="lnbg-tc">
+        <a href="tc.html" class="lnb-link "><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <rect x="3.1" y="2.2" width="9.8" height="11.6" rx="1.6"></rect><path d="M5.6 5.8h4.8M5.6 8.4h4.8M5.6 11h3"></path></svg><span>전체 TC</span></a>
+        <a href="releases.html" class="lnb-link "><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <circle cx="8" cy="8" r="5.6"></circle><circle cx="8" cy="8" r="2.3"></circle></svg><span>릴리즈 TC</span></a>
+      </div>
+      <p class="lnb-group" id="lnbg-run">테스트 실행</p>
+      <div class="lnb-set" role="group" aria-labelledby="lnbg-run">
+        <a href="runs.html" class="lnb-link "><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M5.5 3.5l6.6 4.5-6.6 4.5z"></path></svg><span>테스트 런</span></a>
+        <a href="executions.html" class="lnb-link "><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M3.4 13.2V9.2M8 13.2V3.6M12.6 13.2V7.4"></path></svg><span>실행 결과</span></a>
+      </div>
+      <p class="lnb-group" id="lnbg-admin">관리</p>
+      <div class="lnb-set" role="group" aria-labelledby="lnbg-admin">
+        <a href="#" class="lnb-link "><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M8 1.9l5.8 3-5.8 3-5.8-3z"></path><path d="M2.2 8L8 11l5.8-3"></path><path d="M2.2 11.2L8 14.2l5.8-3"></path></svg><span>프로젝트</span></a>
+        <a href="#" class="lnb-link "><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <circle cx="6.2" cy="5.6" r="2.5"></circle><path d="M1.9 13.6c0-2.4 1.9-3.9 4.3-3.9s4.3 1.5 4.3 3.9"></path>
+  <path d="M11 3.5a2.5 2.5 0 010 4.2M12.1 9.9c1.3.5 2 1.7 2 3.7"></path></svg><span>사용자</span></a>
+      </div>
+    </nav>
+
+    <div class="lnb-foot">
+      
+      <form method="post" class="lnb-me" onsubmit="return false">
+        <span class="lnb-me-name">demo</span>
+        <button type="submit" class="btn quiet btn-sm">로그아웃</button>
+      </form>
+      
+      <a href="#" class="lnb-guide"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M2.4 3.2h4.4A2.4 2.4 0 018 4.4v8.2A2.2 2.2 0 006.4 11H2.4z"></path>
+  <path d="M13.6 3.2H9.2A2.4 2.4 0 008 4.4v8.2A2.2 2.2 0 019.6 11h4z"></path></svg><span>검증 깊이 안내</span></a>
+      
+      <button type="button" class="lnb-theme" data-theme-toggle="" role="switch" aria-checked="true">
+        <span class="lnb-theme-ico" aria-hidden="true">
+          <span data-theme-moon=""><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M13.2 10.3A5.6 5.6 0 015.7 2.8a5.6 5.6 0 107.5 7.5z"></path></svg></span>
+          <span data-theme-sun="" hidden=""><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <circle cx="8" cy="8" r="3.1"></circle>
+  <path d="M8 1.4v1.6M8 13v1.6M1.4 8h1.6M13 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1"></path></svg></span>
+        </span>
+        <span class="lnb-theme-name">Dark</span>
+        <span class="lnb-switch" aria-hidden="true"><span class="lnb-switch-knob"></span></span>
+      </button>
+      <a href="#" target="_blank" class="lnb-link muted">health</a>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <main class="wrap">
+      
+
+<section class="hero-bar">
+  <div>
+    <h1 class="hero-title"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <rect x="2.2" y="2.2" width="5.2" height="5.2" rx="1.2"></rect><rect x="8.6" y="2.2" width="5.2" height="5.2" rx="1.2"></rect>
+  <rect x="2.2" y="8.6" width="5.2" height="5.2" rx="1.2"></rect><rect x="8.6" y="8.6" width="5.2" height="5.2" rx="1.2"></rect></svg> 대시보드</h1>
+    <p class="muted">지금 도는 런과 방금 깨진 TC. 검증 깊이는 그 아래입니다.</p>
+  </div>
+  <div class="hero-actions">
+    <a class="btn primary" href="#">테스트 런 만들기</a>
+    <a class="btn" href="#">마일스톤 만들기</a>
+  </div>
+</section>
+
+
+
+<a class="running-banner is-live" href="runs.html">
+  <span class="running-left">
+    <span class="live-dot" aria-hidden="true"></span>
+    <span>
+      <span class="running-count">지금 실행 중 1건</span>
+      <span class="running-sub">남은 케이스 31 · 런 목록에서 연다</span>
+    </span>
+  </span>
+  <svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3.6L11 8 6 12.4"></path></svg>
+</a>
+
+
+<div class="stat-grid stat-grid-4">
+  
+  <a class="stat-card" href="tc.html">
+    <div class="stat-main">
+      <div class="stat-label">전체 TC</div>
+      <div class="stat-value">1047</div>
+    </div>
+    <span class="stat-ico" aria-hidden="true"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <rect x="3.1" y="2.2" width="9.8" height="11.6" rx="1.6"></rect><path d="M5.6 5.8h4.8M5.6 8.4h4.8M5.6 11h3"></path></svg></span>
+  </a>
+  <a class="stat-card" href="executions.html">
+    <div class="stat-main">
+      <div class="stat-label">최근 7일 PASS</div>
+      <div class="stat-value">4</div>
+    </div>
+    <span class="stat-ico" aria-hidden="true"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.2 8.5l3.1 3.1 6.5-7"></path></svg></span>
+  </a>
+  <a class="stat-card is-danger" href="executions.html">
+    <div class="stat-main">
+      <div class="stat-label">최근 7일 FAIL</div>
+      <div class="stat-value">3</div>
+    </div>
+    <span class="stat-ico" aria-hidden="true"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4L4 12"></path></svg></span>
+  </a>
+  <a class="stat-card" href="runs.html">
+    <div class="stat-main">
+      <div class="stat-label">진행 중 런</div>
+      <div class="stat-value">2</div>
+    </div>
+    <span class="stat-ico" aria-hidden="true"><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M5.5 3.5l6.6 4.5-6.6 4.5z"></path></svg></span>
+  </a>
+</div>
+
+<div class="dash-cols now-ops">
+  <section class="panel-block">
+    <header class="panel-h">
+      <h2>활성 테스트 런</h2>
+      <a class="btn btn-sm" href="runs.html">런 목록</a>
+    </header>
+    
+    <div class="now-runs">
+      
+      <article class="now-run is-live">
+        <header class="now-run-h">
+          <div>
+            <h3 class="now-run-title"><a href="#">야간 회귀</a></h3>
+            <p class="muted small now-run-meta">
+              nightly-regression-20260101-020000
+               · 1.0.0
+            </p>
+          </div>
+          
+          <span class="chip now-st now-st-in_progress">
+            진행
+          </span>
+        </header>
+        
+        <div class="now-track" role="progressbar" aria-valuemin="0" aria-valuemax="32" aria-valuenow="19" aria-label="야간 회귀 19/32건 · 59.4%">
+          <span class="now-seg now-seg-pass" style="flex-grow: 8"></span>
+          <span class="now-seg now-seg-fail" style="flex-grow: 3"></span>
+          <span class="now-seg now-seg-skip" style="flex-grow: 8"></span>
+          
+          <span class="now-seg now-seg-pending" style="flex-grow: 13"></span>
+        </div>
+        <p class="now-run-counts">
+          <b>19</b>/32건
+          · <span class="res res-pass">PASS 8</span>
+          · <span class="res res-fail">FAIL 3</span>
+          · 남음 13
+          · 통과율 42.1%
+        </p>
+        
+        <p class="now-run-act"><a class="btn btn-sm primary" href="#">런 열기</a></p>
+      </article>
+      
+      <article class="now-run">
+        <header class="now-run-h">
+          <div>
+            <h3 class="now-run-title"><a href="#">배포 전 스모크</a></h3>
+            <p class="muted small now-run-meta">
+              nightly-regression-20260101-020000
+              
+            </p>
+          </div>
+          
+          <span class="chip now-st now-st-planned">
+            예정
+          </span>
+        </header>
+        
+        <div class="now-track" role="progressbar" aria-valuemin="0" aria-valuemax="18" aria-valuenow="0" aria-label="배포 전 스모크 0/18건 · 0.0%">
+          
+          
+          
+          
+          <span class="now-seg now-seg-pending" style="flex-grow: 18"></span>
+        </div>
+        <p class="now-run-counts">
+          <b>0</b>/18건
+          · <span class="res res-pass">PASS 0</span>
+          · <span class="res res-fail">FAIL 0</span>
+          · 남음 18
+          
+        </p>
+        
+        <p class="now-run-act"><a class="btn btn-sm primary" href="#">런 열기</a></p>
+      </article>
+      
+    </div>
+    
+  </section>
+
+  <section class="panel-block">
+    <header class="panel-h">
+      <h2>최근 FAIL</h2>
+      <a class="btn btn-sm" href="executions.html">FAIL 전부</a>
+    </header>
+    
+    
+    
+    <ul class="fail-list now-fails">
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-104</span>
+          <time class="muted small">08-24 17:26</time>
+          
+          <span class="fail-why">기대결과 2번 실패 (3줄 중 1줄) — 31일 구간에서 안내창이 떠야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:304</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-106</span>
+          <time class="muted small">08-24 17:16</time>
+          
+          <span class="fail-why">기대결과 1번 실패 (4줄 중 1줄) — 금액 컬럼이 값 크기순으로 정렬돼야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:1191</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-108</span>
+          <time class="muted small">08-24 17:14</time>
+          
+          <span class="fail-why">기대결과 3번 실패 (3줄 중 1줄) — 탭을 옮겨도 주문번호가 유지돼야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:1191</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-110</span>
+          <time class="muted small">08-10 21:06</time>
+          
+          <span class="fail-why">기대결과 4번 실패 (4줄 중 2줄) — 창고를 바꾸면 목록이 다시 조회돼야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:1257</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-112</span>
+          <time class="muted small">08-10 20:48</time>
+          
+          <span class="fail-why">기대결과 2번 실패 (3줄 중 1줄) — 31일 구간에서 안내창이 떠야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:977</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-114</span>
+          <time class="muted small">08-10 20:47</time>
+          
+          <span class="fail-why">기대결과 1번 실패 (4줄 중 1줄) — 금액 컬럼이 값 크기순으로 정렬돼야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:977</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-116</span>
+          <time class="muted small">08-10 20:14</time>
+          
+          <span class="fail-why">기대결과 3번 실패 (3줄 중 1줄) — 탭을 옮겨도 주문번호가 유지돼야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:183</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-118</span>
+          <time class="muted small">08-10 20:14</time>
+          
+          <span class="fail-why">기대결과 4번 실패 (4줄 중 2줄) — 창고를 바꾸면 목록이 다시 조회돼야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:1406</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-120</span>
+          <time class="muted small">08-10 20:03</time>
+          
+          <span class="fail-why">기대결과 2번 실패 (3줄 중 1줄) — 31일 구간에서 안내창이 떠야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:1168</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-122</span>
+          <time class="muted small">08-10 19:55</time>
+          
+          <span class="fail-why">기대결과 1번 실패 (4줄 중 1줄) — 금액 컬럼이 값 크기순으로 정렬돼야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:1059</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-124</span>
+          <time class="muted small">08-10 19:52</time>
+          
+          <span class="fail-why">기대결과 3번 실패 (3줄 중 1줄) — 탭을 옮겨도 주문번호가 유지돼야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:2002</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-126</span>
+          <time class="muted small">08-10 19:51</time>
+          
+          <span class="fail-why">기대결과 4번 실패 (4줄 중 2줄) — 창고를 바꾸면 목록이 다시 조회돼야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:1966</span>
+          
+        </a>
+      </li>
+      
+      <li>
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-128</span>
+          <time class="muted small">08-10 19:46</time>
+          
+          <span class="fail-why">기대결과 2번 실패 (3줄 중 1줄) — 31일 구간에서 안내창이 떠야 한다</span>
+          <span class="muted small mono">order-list.spec.ts:306</span>
+          
+        </a>
+      </li>
+      
+      <li class="dim">
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-130</span>
+          <time class="muted small">08-10 19:14</time>
+          
+        </a>
+      </li>
+      
+      <li class="dim">
+        <a class="fail-row" href="#">
+          <span class="tc-id">TC-DEMO-131</span>
+          <time class="muted small">08-10 19:14</time>
+          
+        </a>
+      </li>
+      
+    </ul>
+    
+    <p class="muted small note-once">
+      흐리게 표시된 2건은 FAIL 사유가 없다 —
+      러너가 원인을 남기기 시작한 것이 최근이라, 그 이전 기록에는 결과만 있다. 다시 돌리면 채워진다.
+    </p>
+    
+    
+  </section>
+</div>
+
+
+<section class="flow-rail">
+  <h2 class="card-h">작업 흐름</h2>
+  <ol class="flow-grid">
+    <li class="flow-card">
+      <span class="flow-num" aria-hidden="true">1</span>
+      <div class="flow-body">
+        <h3><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <rect x="3.1" y="2.2" width="9.8" height="11.6" rx="1.6"></rect><path d="M5.6 5.8h4.8M5.6 8.4h4.8M5.6 11h3"></path></svg> 전체 TC</h3>
+        <p>화면마다 쓴 케이스를 찾습니다.</p>
+        <a class="btn btn-sm" href="tc.html">목록 열기</a>
+      </div>
+    </li>
+    <li class="flow-card">
+      <span class="flow-num" aria-hidden="true">2</span>
+      <div class="flow-body">
+        <h3><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <circle cx="8" cy="8" r="5.6"></circle><circle cx="8" cy="8" r="2.3"></circle></svg> 릴리즈 TC</h3>
+        <p>이번 버전 이슈에 TC를 붙입니다.</p>
+        <a class="btn btn-sm" href="releases.html">릴리즈 열기</a>
+      </div>
+    </li>
+    <li class="flow-card">
+      <span class="flow-num" aria-hidden="true">3</span>
+      <div class="flow-body">
+        <h3><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M5.5 3.5l6.6 4.5-6.6 4.5z"></path></svg> 테스트 런</h3>
+        <p>돌릴 묶음을 만들고 실행합니다.</p>
+        <a class="btn btn-sm primary" href="#">런 만들기</a>
+      </div>
+    </li>
+    <li class="flow-card">
+      <span class="flow-num" aria-hidden="true">4</span>
+      <div class="flow-body">
+        <h3><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M3.4 13.2V9.2M8 13.2V3.6M12.6 13.2V7.4"></path></svg> 실행 결과</h3>
+        <p>FAIL부터 보고 검수합니다.</p>
+        <a class="btn btn-sm" href="executions.html">FAIL 보기</a>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="depth-block">
+  <h2 class="card-h">검증 깊이</h2>
+  <p class="page-intro">
+    <strong>검증 깊이</strong>가 진척입니다. TC 개수·실행 횟수는 그 아래 참고입니다.
+    칸마다 할 일이 다릅니다 — <a href="#depth-glossary">검증 깊이 안내</a>에 적어 두었습니다.
+  </p>
+<section class="dash-top">
+<article class="donut-card">
+  
+  <div class="donut" style="--pct: 11.5" role="img">
+    <div class="donut-hole">
+      <strong class="donut-pct">11.5<span>%</span></strong>
+      <span class="donut-cap">전수 검증</span>
+    </div>
+  </div>
+  <p class="donut-sub">
+    <a href="tc.html"><b>95</b></a>
+    / 826건 · 기대결과를 전부 검증한 TC <span class="muted">(보관 제외)</span>
+  </p>
+</article>
+
+<article class="depth-card">
+  <h2 class="card-h">검증 분포</h2>
+  
+  <ul class="depth-legend">
+    <li><i class="sw sw-full"></i><a href="tc.html">전수 검증 <b>95</b></a></li>
+    <li><i class="sw sw-partial"></i><a href="tc.html">부분 검증 <b>34</b></a></li>
+    
+    <li><i class="sw sw-tcfix"></i><a href="tc.html">TC 문구가 막음 <b>8</b></a></li>
+    
+    <li><i class="sw sw-envblk"></i><a href="tc.html">환경이 없어 못 봄 <b>8</b></a></li>
+    
+    <li><i class="sw sw-replay"></i><a href="tc.html">재생본으로 돎 <b>1</b></a></li>
+    
+    <li><i class="sw sw-unreviewed"></i><a href="tc.html">미검수 <b>0</b></a></li>
+    <li><i class="sw sw-blocked"></i><a href="tc.html">검수가 막음 <b>7</b></a></li>
+    <li><i class="sw sw-ran"></i><a href="tc.html">확인 필요 <b>69</b></a></li>
+    <li><i class="sw sw-none"></i><a href="tc.html">미실행 <b>604</b></a></li>
+    <li class="grow"><a href="tc.html">이 826건 전부 →</a></li>
+  </ul>
+
+  <div class="depth-bar" role="img" aria-label="전수 검증 95 · 부분 검증 34 · TC 문구가 막음 8 · 환경이 없어 못 봄 8 · 재생본으로 돎 1 · 미검수 0 · 검수가 막음 7 · 확인 필요 69 · 미실행 604">
+    <span class="seg seg-full" style="width: 11.5%"></span>
+    <span class="seg seg-partial" style="width: 4.1%"></span>
+    <span class="seg seg-tcfix" style="width: 1.0%"></span>
+    <span class="seg seg-envblk" style="width: 1.0%"></span>
+    <span class="seg seg-replay" style="width: 0.1%"></span>
+    <span class="seg seg-unreviewed" style="width: 0.0%"></span>
+    <span class="seg seg-blocked" style="width: 0.8%"></span>
+    <span class="seg seg-ran" style="width: 8.4%"></span>
+    <span class="seg seg-none" style="width: 73.1%"></span>
+  </div>
+
+  
+  
+  <p class="smoke-line">
+    <span class="muted small">화면 스모크 —</span>
+    <span class="res res-pass">151</span> 오류 없음
+    · <span class="res res-fail">2</span> 스크립트 오류
+    · <span class="res res-none">41</span> 미실행
+    <span class="muted small">/ 화면 194개 · 깊이가 아니라 너비다</span>
+    <a class="btn btn-sm" href="tc.html">스모크 목록</a>
+  </p>
+  
+</article>
+</section>
+</section>
+
+<details class="depth-glossary" id="depth-glossary">
+  <summary><svg class="ic" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <path d="M2.4 3.2h4.4A2.4 2.4 0 018 4.4v8.2A2.2 2.2 0 006.4 11H2.4z"></path>
+  <path d="M13.6 3.2H9.2A2.4 2.4 0 008 4.4v8.2A2.2 2.2 0 019.6 11h4z"></path></svg> 검증 깊이 안내 — 각 칸이 다음에 할 일</summary>
+  
+  <div class="guide-grid">
+    <article class="guide-tile">
+      <h3><i class="sw sw-full"></i> 전수 검증</h3>
+      <p>기대결과를 전부 봤고 검수까지 통과한 것. 믿을 수 있는 초록.</p>
+      <a class="btn btn-sm" href="tc.html">목록 95건</a>
+    </article>
+    <article class="guide-tile">
+      <h3><i class="sw sw-partial"></i> 부분 검증</h3>
+      <p>일부 줄만 봤다. 데이터·실행을 더 하면 채워질 수 있다.</p>
+      <a class="btn btn-sm" href="tc.html">목록 34건</a>
+    </article>
+    <article class="guide-tile">
+      <h3><i class="sw sw-tcfix"></i> TC 문구가 막음</h3>
+      <p>데이터를 넣어도 안 열린다 — TC 문구를 고쳐야 한다.</p>
+      <a class="btn btn-sm" href="tc.html">목록 8건</a>
+    </article>
+    <article class="guide-tile">
+      <h3><i class="sw sw-envblk"></i> 환경이 없어 못 봄</h3>
+      <p>권한·에이전트 구성이 필요하다. 코드만으로는 못 연다.</p>
+      <a class="btn btn-sm" href="tc.html">목록 8건</a>
+    </article>
+    <article class="guide-tile">
+      <h3><i class="sw sw-replay"></i> 재생본으로 돎</h3>
+      <p>HAR 재생이라 서버 계약을 판정하지 못한다. 라이브로 다시 돈다.</p>
+      <a class="btn btn-sm" href="tc.html">목록 1건</a>
+    </article>
+    <article class="guide-tile">
+      <h3><i class="sw sw-unreviewed"></i> 미검수</h3>
+      <p>PASS로 기록됐지만 run-reviewer 를 안 거쳤다. 검수만 부르면 된다.</p>
+      <a class="btn btn-sm" href="tc.html">목록 0건</a>
+    </article>
+    <article class="guide-tile">
+      <h3><i class="sw sw-blocked"></i> 검수가 막음</h3>
+      <p>초록이 거짓이라고 판정됐다. 스펙이나 TC 를 고친다.</p>
+      <a class="btn btn-sm" href="tc.html">목록 7건</a>
+    </article>
+    <article class="guide-tile">
+      <h3><i class="sw sw-ran"></i> 확인 필요</h3>
+      <p>돌았지만 깊이 판정이 애매하다. 기록을 열어 본다.</p>
+      <a class="btn btn-sm" href="tc.html">목록 69건</a>
+    </article>
+    <article class="guide-tile">
+      <h3><i class="sw sw-none"></i> 미실행</h3>
+      <p>아직 한 번도 안 돌았다.</p>
+      <a class="btn btn-sm" href="tc.html">목록 604건</a>
+    </article>
+  </div>
+</details>
+
+<section class="panel-block" style="margin-top:1.25rem">
+  <header class="panel-h">
+    <h2>Task별 TC 수 (상위)</h2>
+    <a class="btn btn-sm" href="tc.html">전체 TC</a>
+  </header>
+  
+  <table class="grid compact-grid">
+    <thead><tr><th>task_id</th><th>TC</th></tr></thead>
+    <tbody>
+      
+      <tr>
+        <td><a href="tc.html">야간 회귀</a></td>
+        <td>24</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">배포 전 스모크</a></td>
+        <td>24</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">야간 회귀</a></td>
+        <td>20</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">배포 전 스모크</a></td>
+        <td>15</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">야간 회귀</a></td>
+        <td>14</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">배포 전 스모크</a></td>
+        <td>13</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">야간 회귀</a></td>
+        <td>13</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">배포 전 스모크</a></td>
+        <td>13</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">야간 회귀</a></td>
+        <td>12</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">배포 전 스모크</a></td>
+        <td>11</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">야간 회귀</a></td>
+        <td>11</td>
+      </tr>
+      
+      <tr>
+        <td><a href="tc.html">배포 전 스모크</a></td>
+        <td>11</td>
+      </tr>
+      
+    </tbody>
+  </table>
+  
+</section>
+<script>
+  (function () {
+    if (location.hash !== "#depth-glossary") return;
+    var el = document.getElementById("depth-glossary");
+    if (el) el.open = true;
+  })();
+</script>
+
+    </main>
+  </div>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <div id="insp-root" class="insp-root" hidden="">
+    <button type="button" class="insp-scrim" data-insp-scrim="" aria-label="검사 닫기"></button>
+    <aside class="insp-drawer" role="dialog" aria-modal="true" aria-labelledby="insp-title">
+      <header class="insp-head">
+        <div>
+          <p class="insp-kicker">검토</p>
+          <h2 class="insp-title" id="insp-title" data-insp-title=""></h2>
+          <p class="insp-sub" data-insp-sub="" hidden=""></p>
+        </div>
+        <button type="button" class="insp-close" data-insp-close="">×</button>
+      </header>
+      <div class="insp-body" data-insp-body=""></div>
+    </aside>
+  </div>
+  <div id="shot-root" class="shot-root" hidden="">
+    <button type="button" class="shot-scrim" data-shot-close="" aria-label="증적 닫기"></button>
+    <div class="shot-stage" role="dialog" aria-modal="true" aria-labelledby="shot-title">
+      <header class="shot-head">
+        <div>
+          <p class="shot-kicker" id="shot-title">증적</p>
+          <p class="shot-caption" data-shot-caption="" hidden=""></p>
+        </div>
+        <button type="button" class="shot-close" data-shot-close="">×</button>
+      </header>
+      <div class="shot-body">
+        <img data-shot-img="" alt="">
+      </div>
+    </div>
+  </div>
+  
+  
+  <script src="static/theme.js"></script>
+  <script src="static/lnb.js"></script>
+  <script>
+    document.addEventListener("click", function (e) {
+      var el = e.target.closest && e.target.closest('input[type="date"]');
+      if (!el || el.disabled || el.readOnly) return;
+      if (e.offsetX > el.clientWidth - 26) return;
+      try { el.showPicker(); } catch (err) { /* native */ }
+    });
+  </script>
+  
+
+</body></html>

@@ -1,0 +1,308 @@
+
+
+
+
+
+:root[data-theme="light"] {
+  
+  --vd-font-sans: "IBM Plex Sans", -apple-system, "Apple SD Gothic Neo", "Segoe UI Symbol", "Malgun Gothic", system-ui, sans-serif;
+  
+  --vd-font-mono: "IBM Plex Mono", "IBM Plex Sans", ui-monospace, "Cascadia Code", Consolas, monospace;
+
+  --vd-zinc-0: #ffffff;
+  --vd-zinc-50: #fafafa;
+  --vd-zinc-100: #f4f4f5;
+  --vd-zinc-200: #e4e4e7;
+  --vd-zinc-300: #d4d4d8;
+  --vd-zinc-400: #a1a1aa;
+  --vd-zinc-500: #71717a;
+  --vd-zinc-600: #52525b;
+  
+  --vd-zinc-700: #3f3f46;
+  --vd-zinc-900: #18181b;
+  --vd-zinc-950: #09090b;
+
+  --vd-brand-50: #eef2ff;
+  --vd-brand-500: #6366f1;
+  --vd-brand-600: #4f46e5;
+  --vd-brand-700: #4338ca;
+
+  --vd-critical-50: #fef2f2;
+  --vd-critical-500: #ef4444;
+  --vd-critical-600: #dc2626;
+  --vd-critical-700: #b91c1c;
+  --vd-high-600: #ea580c;
+  --vd-high-700: #c2410c;
+  --vd-warning-600: #d97706;
+  
+  --vd-amber-700: #b45309;   
+  --vd-teal-700: #0f766e;    
+  --vd-violet-700: #6d28d9;  
+  --vd-lime-700: #4d7c0f;    
+  --vd-sky-700: #0369a1;     
+  
+  --vd-amber-800: #92400e;
+  --vd-rose-700: #be123c;    
+  --vd-low-600: #ca8a04;
+  --vd-success-600: #059669;
+  --vd-success-700: #047857;
+  --vd-info-600: #2563eb;
+  --vd-info-700: #1d4ed8;
+
+  
+  --bg-canvas: var(--vd-zinc-50);
+  --bg-surface: var(--vd-zinc-0);
+  --bg-surface-2: var(--vd-zinc-50);
+  --bg-muted: var(--vd-zinc-100);
+  --bg-hover: var(--vd-zinc-100);
+  --bg-active: var(--vd-zinc-200);
+
+  --fg-default: var(--vd-zinc-900);
+  --fg-strong: var(--vd-zinc-950);
+  --fg-muted: var(--vd-zinc-600);
+  --fg-subtle: var(--vd-zinc-500);
+  --fg-disabled: var(--vd-zinc-400);
+  --fg-link: var(--vd-brand-700);
+
+  --border-default: var(--vd-zinc-200);
+  --border-strong: var(--vd-zinc-300);
+  --border-subtle: var(--vd-zinc-100);
+
+  --sev-critical: var(--vd-critical-600);
+  --sev-critical-fg: var(--vd-critical-700);
+  --sev-high: var(--vd-high-600);
+  --sev-medium: var(--vd-warning-600);
+  --sev-low: var(--vd-low-600);
+  --sev-info: var(--vd-info-600);
+  --sev-pass: var(--vd-success-600);
+
+  --ring-brand: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+
+:root[data-theme="light"] {
+  
+  --bg: var(--bg-canvas);
+  --panel: var(--bg-surface);
+  --panel-2: var(--bg-surface-2);
+  --line: var(--border-default);
+
+  
+  --text: var(--fg-default);       
+  --text-2: var(--vd-zinc-700);    
+  --muted: var(--fg-muted);        
+
+  --accent: var(--vd-brand-600);
+  --accent-soft: var(--vd-brand-50);
+  
+  --ok: var(--vd-success-700);
+  --no: var(--sev-critical);
+
+  --chip: var(--bg-muted);
+  
+  --track: var(--bg-active);
+
+  --font: var(--vd-font-sans);
+  --mono: var(--vd-font-mono);
+
+  
+  --res-pass: var(--vd-success-700);
+  --res-fail: var(--sev-critical);
+  
+  --res-skip: var(--vd-amber-700);
+  --res-none: var(--fg-disabled);
+
+  
+  --depth-full: var(--vd-success-700);
+  --depth-partial: var(--sev-info);
+  --depth-unreviewed: var(--vd-amber-700);
+  --depth-envblk: var(--vd-teal-700);
+  --depth-tcfix: var(--vd-violet-700);
+  
+  --depth-blocked: var(--vd-critical-700);
+  --depth-replay: var(--vd-lime-700);
+  --depth-ran: var(--fg-subtle);
+  --depth-none: var(--fg-disabled);
+
+  
+  --toolgap: var(--vd-sky-700);
+
+  
+  --req: var(--vd-rose-700);
+
+  
+  --danger: var(--vd-critical-600);
+  --danger-soft: rgba(220, 38, 38, 0.08);
+  --danger-tint: rgba(220, 38, 38, 0.12);
+  --danger-tint-hover: rgba(220, 38, 38, 0.20);
+
+  
+  --radius-lg: 12px;
+  --radius: 8px;
+  --radius-sm: 6px;
+
+  
+  --shadow-sm: 0 1px 2px rgba(9, 9, 11, 0.06), 0 1px 1px rgba(9, 9, 11, 0.04);
+  --shadow: 0 4px 8px -2px rgba(9, 9, 11, 0.08), 0 2px 4px -1px rgba(9, 9, 11, 0.04);
+  --shadow-lg: 0 12px 24px -6px rgba(9, 9, 11, 0.12), 0 4px 8px -2px rgba(9, 9, 11, 0.06);
+
+  
+  --hairline: rgba(9, 9, 11, 0.05);
+
+  --scroll-thumb: var(--vd-zinc-300);
+  --scroll-thumb-hover: var(--vd-zinc-400);
+
+  
+  --bg-elev: var(--bg-surface);      
+  --line-strong: var(--border-strong);
+  
+  --accent-2: var(--sev-info);
+  
+  --ring: var(--sev-pass);
+
+  
+}
+
+
+[data-theme="light"] :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--ring-brand);
+}
+
+
+
+
+[data-theme="light"] body.app-shell::before { background: none; }
+
+[data-theme="light"] .wb-bench .lnb { background: var(--bg-surface); }
+[data-theme="light"] .wb-bench .lnb-link:hover,
+[data-theme="light"] .wb-bench .lnb-guide:hover,
+[data-theme="light"] .wb-bench .lnb-theme:hover { background: var(--bg-hover) !important; }
+
+[data-theme="light"] .wb-bench .lnb-link.active {
+  background: var(--bg-active) !important;
+}
+
+[data-theme="light"] .wb-bench .lnb-proj select { border-color: var(--line); }
+[data-theme="light"] .wb-bench .lnb-proj select:hover { border-color: var(--line-strong); }
+
+[data-theme="light"] .wb-bench .lnb-foot { border-top-color: var(--line); }
+
+[data-theme="light"] .wb-bench .lnb-fold:hover { background: var(--bg-hover); }
+[data-theme="light"] .wb-bench .lnb-switch { background: var(--bg-active); }
+[data-theme="light"] .wb-bench .lnb-proj-mini { border-color: var(--line); }
+[data-theme="light"] .wb-bench .lnb-proj-mini:hover { border-color: var(--line-strong); }
+
+@media (min-width: 901px) {
+  html[data-lnb="fold"][data-theme="light"] .wb-bench .lnb-nav > .lnb-group:not(:first-child) + .lnb-set {
+    border-top-color: var(--line);
+  }
+}
+
+
+[data-theme="light"] .wb-bench .brand-mark,
+[data-theme="light"] .theme-pill,
+[data-theme="light"] .btn.primary,
+[data-theme="light"] .btn.primary:hover,
+[data-theme="light"] .wb-bench .filter-submit,
+[data-theme="light"] .wb-bench .flow-num,
+[data-theme="light"] .wb-bench a.stat-card:hover .stat-go { color: var(--vd-zinc-0); }
+[data-theme="light"] .wb-bench .brand-mark {
+  
+  background: linear-gradient(145deg, var(--vd-brand-600), var(--vd-brand-700));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+[data-theme="light"] .btn.primary:hover {
+  background: var(--vd-brand-700);
+  border-color: var(--vd-brand-700);
+}
+
+
+
+
+[data-theme="light"] .live-banner {
+  border: 1px solid color-mix(in srgb, var(--ok) 35%, transparent);
+  background: color-mix(in srgb, var(--ok) 8%, var(--bg-surface));
+}
+[data-theme="light"] .live-dot { box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 18%, transparent); }
+
+
+[data-theme="light"] .rel-table thead th { background: var(--bg-muted); }
+[data-theme="light"] .exec-table tbody tr:hover { background: var(--bg-hover); }
+[data-theme="light"] .wb-bench .exec-row.is-fail { background: color-mix(in srgb, var(--no) 6%, var(--bg-surface)); }
+[data-theme="light"] .wb-bench .exec-row.is-fail:hover { background: color-mix(in srgb, var(--no) 11%, var(--bg-surface)); }
+[data-theme="light"] .exec-lens-chip.is-fail { border-color: color-mix(in srgb, var(--no) 45%, transparent); }
+
+
+[data-theme="light"] .expand-btn {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent) !important;
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg-surface)) !important;
+  color: var(--vd-brand-700) !important;
+}
+[data-theme="light"] .expand-btn[aria-expanded="true"] { color: var(--vd-zinc-0) !important; }
+[data-theme="light"] .tc-row.is-inspecting {
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-surface)) !important;
+  outline-color: color-mix(in srgb, var(--accent) 45%, transparent) !important;
+}
+[data-theme="light"] .insp-kicker { color: var(--vd-brand-700) !important; }
+
+
+[data-theme="light"] .login-body { background: var(--bg-canvas); }
+
+
+
+
+[data-theme="light"] .result.pass    { background: color-mix(in srgb, var(--res-pass) 12%, var(--bg-surface)); color: var(--vd-success-700); }
+[data-theme="light"] .result.fail    { background: color-mix(in srgb, var(--res-fail) 12%, var(--bg-surface)); color: var(--vd-critical-700); }
+[data-theme="light"] .result.skip    { background: color-mix(in srgb, var(--res-skip) 10%, var(--bg-surface)); color: var(--vd-amber-800); }
+[data-theme="light"] .result.blocked { background: var(--bg-muted); color: var(--fg-muted); }
+[data-theme="light"] .result-btn.pass { border-color: color-mix(in srgb, var(--res-pass) 45%, transparent); color: var(--vd-success-700); }
+[data-theme="light"] .result-btn.fail { border-color: color-mix(in srgb, var(--res-fail) 45%, transparent); color: var(--vd-critical-700); }
+[data-theme="light"] .result-btn.skip { border-color: color-mix(in srgb, var(--res-skip) 45%, transparent); color: var(--vd-amber-800); }
+
+
+[data-theme="light"] .tc-list thead th,
+[data-theme="light"] .exec-table thead th,
+[data-theme="light"] .rel-table thead th { background: var(--bg-muted); }
+
+
+[data-theme="light"] .status-seg-btn.status-planned.is-active {
+  background: var(--bg-active);
+  color: var(--fg-default);
+}
+[data-theme="light"] .status-seg-btn.status-in_progress.is-active {
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-surface));
+  color: var(--vd-brand-700);
+}
+[data-theme="light"] .status-seg-btn.is-active { box-shadow: inset 0 0 0 1px var(--border-strong); }
+
+
+[data-theme="light"] .run-st-in_progress,
+[data-theme="light"] .now-st-in_progress {
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-surface));
+  color: var(--vd-brand-700);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+[data-theme="light"] .run-st-completed,
+[data-theme="light"] .now-st-completed {
+  background: color-mix(in srgb, var(--ok) 12%, var(--bg-surface));
+  color: var(--vd-success-700);
+  border-color: color-mix(in srgb, var(--ok) 38%, transparent);
+}
+[data-theme="light"] .run-st-aborted,
+[data-theme="light"] .now-st-aborted {
+  background: color-mix(in srgb, var(--no) 10%, var(--bg-surface));
+  color: var(--vd-critical-700);
+  border-color: color-mix(in srgb, var(--no) 36%, transparent);
+}
+
+
+[data-theme="light"] .brand-mark, [data-theme="light"] .btn.primary { color: var(--vd-zinc-0); }
+[data-theme="light"] .btn.danger-solid { color: var(--vd-zinc-0); }
+[data-theme="light"] .theme-pill { background: var(--accent); color: var(--vd-zinc-0); }
+
+
+[data-theme="light"] .status-seg { background: var(--bg-muted); }
+[data-theme="light"] .status-seg-btn:hover { background: var(--bg-hover); }
+[data-theme="light"] .tc-tab:hover:not([disabled]) { background: var(--bg-hover); }
+[data-theme="light"] .tc-list tbody tr.tc-row:hover { background: var(--bg-hover); }

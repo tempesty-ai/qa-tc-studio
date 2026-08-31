@@ -22,6 +22,7 @@
 - ✅ **자체 검증**: `validate_tc.py` (AI 자가채점이 아니라 스크립트가 검증, CI 연동 가능)
 - 🚶 **단독 재현**: 각 절차 맨 앞에 "…화면으로 이동" 단계 자동 삽입
 - 📤 **CSV 내보내기/불러오기** 로 결과 백업·공유
+- 🧪 **확장 프로토타입**: 테스트 런·실행 검수·릴리즈 추적 UI ([QA Bench](#확장-프로토타입--qa-bench))
 
 ---
 
@@ -103,6 +104,47 @@ https://github.com/tempesty-ai/qa-tc-studio/releases/latest/download/qa-tc-studi
 
 ---
 
+---
+
+## 확장 프로토타입 — QA Bench
+
+`qa-tc-studio`는 **TC 정본 관리 → 리포트·대시보드**까지를 다룹니다. 그 위에 얹히는
+**테스트 런 · 실행 검수 · 릴리즈 추적** 층을 UI로 먼저 설계해 본 프로토타입이 `demo/qa-bench/` 입니다.
+서버 없이 `demo/qa-bench/index.html` 을 브라우저로 열면 바로 확인할 수 있습니다.
+
+### 대시보드 — 지금 도는 런과 방금 깨진 TC
+
+![QA Bench 대시보드](docs/screens/dashboard.png)
+
+전체 TC 수가 아니라 **지금 실행 중인 런, 최근 7일 PASS/FAIL, 방금 깨진 TC**를 먼저 보여줍니다.
+진행률 막대는 PASS · FAIL · 남음을 한 줄에 겹쳐 표시해, 통과율만으로는 안 보이는
+"얼마나 남았는지"가 같이 읽히도록 했습니다.
+
+### 전체 TC — 화면 지도 + 검증 축 필터
+
+![QA Bench TC 목록](docs/screens/tc.png)
+
+왼쪽은 **화면 지도**(대메뉴 → 카테고리 → 화면), 오른쪽은 그 화면의 TC 목록입니다.
+`TC 없는 화면` 을 따로 세어 **비어 있는 곳을 숨기지 않습니다.**
+필터 축은 결과와 분리돼 있습니다 — 검증 의도 · 우선순위 · 자동화 여부 · 최근 결과 · **검증 깊이**.
+
+### 릴리즈 TC — 버전에 묶인 이슈와 TC
+
+![QA Bench 릴리즈](docs/screens/releases.png)
+
+특정 버전에 포함된 이슈와 거기 연결된 TC를 함께 봅니다. 이슈마다 `TC 저장됨` / 미작성 상태가
+드러나므로, **릴리즈에 들어가는데 TC가 없는 항목**이 눈에 띕니다.
+
+### 설계에서 잡은 원칙
+
+- **진척은 TC 개수가 아니라 검증 깊이로.** 전수 검증 · 부분 검증 · 미검수 · 검수 막힘을
+  구분해, "몇 건 실행했다"가 "얼마나 확인됐다"를 대신하지 않게 했습니다.
+- **화면의 껍데기가 데이터보다 눈에 띄지 않게.** 색은 상태 구분에만 쓰고 장식에는 쓰지 않습니다.
+- 데모 데이터는 전부 가상입니다. 실제 이슈 트래커 링크는 포함하지 않습니다.
+
+> 이 프로토타입은 원래 별도 저장소(`testoperation`)였습니다. 다루는 대상이 같은 TC 라이프사이클이라
+> 이곳으로 옮겼습니다. 현재는 정적 UI이며, `qa-tc-studio` 의 데이터 모델과는 아직 연결돼 있지 않습니다.
+
 ## 폴더 구조
 
 ```
@@ -116,6 +158,8 @@ qa-tc-studio/
 ├─ schema/tc_data.schema.json
 ├─ examples/tc_data.example.json
 ├─ skills/qa-tc-studio/      Codex/Claude 공용 설치형 Skill
+├─ demo/qa-bench/           확장 프로토타입 UI (정적, 서버 불필요)
+├─ docs/screens/            README 용 화면 캡처
 ├─ claude/SKILL.md           이전 Claude 지침
 ├─ codex/AGENTS.md           이전 Codex/기타 에이전트 지침
 └─ docs/installation.md      Codex/Claude 설치 가이드
